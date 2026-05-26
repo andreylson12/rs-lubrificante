@@ -5,66 +5,53 @@ const { Pool } = require("pg");
 const app = express();
 
 app.use(cors());
-
 app.use(express.json());
-
 app.use(express.static("./"));
 
 if(!process.env.DATABASE_URL){
-
-console.error(
-"DATABASE_URL não encontrada"
-);
-
+console.error("DATABASE_URL não encontrada");
 process.exit(1);
-
 }
 
 const pool = new Pool({
-
-connectionString:
-process.env.DATABASE_URL,
-
+connectionString: process.env.DATABASE_URL,
 ssl:{
 rejectUnauthorized:false
 }
-
 });
+
+function normalizarPagamento(valor){
+return String(valor || "")
+.toLowerCase()
+.trim()
+.normalize("NFD")
+.replace(/[\u0300-\u036f]/g,"");
+}
 
 async function iniciarBanco(){
 
 await pool.query(`
-
 CREATE TABLE IF NOT EXISTS vendas (
-
 id SERIAL PRIMARY KEY,
 nome TEXT,
 litros NUMERIC,
 valor NUMERIC,
 forma_pagamento TEXT,
 hora TEXT
-
 );
-
 `);
 
 await pool.query(`
-
 CREATE TABLE IF NOT EXISTS clientes (
-
 id SERIAL PRIMARY KEY,
 nome TEXT,
 telefone TEXT,
 limite_valor NUMERIC,
 devedor NUMERIC DEFAULT 0
-
 );
-
 `);
 
-console.log(
-"Banco conectado!"
-);
+console.log("Banco conectado!");
 
 }
 
@@ -74,8 +61,7 @@ app.get("/api/vendas", async (req,res) => {
 
 try{
 
-const result =
-await pool.query(
+const result = await pool.query(
 "SELECT * FROM vendas ORDER BY id DESC"
 );
 
@@ -95,93 +81,95 @@ app.post("/api/vendas", async (req,res) => {
 
 try{
 
-const {
+let {
 nome,
 litros,
 valor,
 formaPagamento,
+forma_pagamento,
 hora
 } = req.body;
 
-if(
-formaPagamento === "fiado"
-){
+nome = String(nome || "").trim();
 
-const clienteResult =
-await pool.query(
+const pagamentoOriginal =
+formaPagamento || forma_pagamento || "pix";
 
+const pagamento =
+normalizarPagamento(pagamentoOriginal);
+
+const formaFinal =
+pagamento.includes("fiado") || pagamento.includes("prazo")
+? "fiado"
+: "pix";
+
+if(!nome || nome.length < 2){
+
+return res.status(400).json({
+erro:"Nome inválido"
+});
+
+}
+
+if(formaFinal === "fiado"){
+
+const clienteResult = await pool.query(
 `
 SELECT * FROM clientes
-WHERE LOWER(nome)=LOWER($1)
+WHERE LOWER(TRIM(nome)) = LOWER(TRIM($1))
 `,
-
 [nome]
-
 );
 
-if(
-clienteResult.rows.length === 0
-){
+if(clienteResult.rows.length === 0){
 
 return res.status(400).json({
-erro:"Cliente não cadastrado"
+erro:"Cliente não cadastrado no fiado"
 });
 
 }
 
-const cliente =
-clienteResult.rows[0];
+const cliente = clienteResult.rows[0];
 
 const novoDevedor =
-Number(cliente.devedor)
-+ Number(valor);
+Number(cliente.devedor || 0) + Number(valor || 0);
 
-if(
-novoDevedor >
-Number(cliente.limite_valor)
-){
+if(novoDevedor > Number(cliente.limite_valor || 0)){
 
 return res.status(400).json({
-erro:"Limite excedido"
+erro:"Limite do cliente excedido"
 });
 
 }
 
 await pool.query(
-
 `
 UPDATE clientes
 SET devedor=$1
 WHERE id=$2
 `,
-
 [
 novoDevedor,
 cliente.id
 ]
-
 );
 
 }
 
 await pool.query(
-
 `
 INSERT INTO vendas
-(nome,litros,valor,forma_pagamento,hora)
-
+(nome, litros, valor, forma_pagamento, hora)
 VALUES
-($1,$2,$3,$4,$5)
+($1, $2, $3, $4, $5)
 `,
-
 [
 nome,
 litros,
 valor,
-formaPagamento,
+formaFinal,
 hora
 ]
-
 );
 
 res.json({
@@ -189,6 +177,8 @@ sucesso:true
 });
 
 }catch(error){
+
+console.error(error);
 
 res.status(500).json({
 erro:error.message
@@ -202,8 +192,7 @@ app.get("/api/clientes", async (req,res) => {
 
 try{
 
-const result =
-await pool.query(
+const result = await pool.query(
 "SELECT * FROM clientes ORDER BY id DESC"
 );
 
@@ -231,22 +220,18 @@ devedor
 } = req.body;
 
 await pool.query(
-
 `
 INSERT INTO clientes
-(nome,telefone,limite_valor,devedor)
-
+(nome, telefone, limite_valor, devedor)
 VALUES
-($1,$2,$3,$4)
+($1, $2, $3, $4)
 `,
-
 [
-nome,
-telefone,
-limite,
-devedor
+String(nome || "").trim(),
+telefone || "",
+Number(limite || 0),
+Number(devedor || 0)
 ]
-
 );
 
 res.json({
@@ -263,25 +248,19 @@ erro:error.message
 
 });
 
-app.put(
-"/api/clientes/:id/receber",
-async (req,res) => {
+app.put("/api/clientes/:id/receber", async (req,res) => {
 
 try{
 
-const id =
-req.params.id;
-
 await pool.query(
-
 `
 UPDATE clientes
 SET devedor=0
 WHERE id=$1
 `,
-
-[id]
-
+[
+req.params.id
+]
 );
 
 res.json({
@@ -298,30 +277,21 @@ erro:error.message
 
 });
 
-app.delete(
-"/api/vendas/:id",
-async (req,res) => {
+app.delete("/api/vendas/:id", async (req,res) => {
 
 try{
 
-const id =
-req.params.id;
-
-const vendaResult =
-await pool.query(
-
+const vendaResult = await pool.query(
 `
 SELECT * FROM vendas
 WHERE id=$1
 `,
-
-[id]
-
+[
+req.params.id
+]
 );
 
-if(
-vendaResult.rows.length === 0
-){
+if(vendaResult.rows.length === 0){
 
 return res.status(404).json({
 erro:"Venda não encontrada"
@@ -329,53 +299,41 @@ erro:"Venda não encontrada"
 
 }
 
-const venda =
-vendaResult.rows[0];
+const venda = vendaResult.rows[0];
 
-if(
-venda.forma_pagamento === "fiado"
-){
+if(venda.forma_pagamento === "fiado"){
 
-const clienteResult =
-await pool.query(
-
+const clienteResult = await pool.query(
 `
 SELECT * FROM clientes
-WHERE LOWER(nome)=LOWER($1)
+WHERE LOWER(TRIM(nome)) = LOWER(TRIM($1))
 `,
-
-[venda.nome]
-
+[
+venda.nome
+]
 );
 
-if(
-clienteResult.rows.length > 0
-){
+if(clienteResult.rows.length > 0){
 
-const cliente =
-clienteResult.rows[0];
+const cliente = clienteResult.rows[0];
 
 let novoDevedor =
-Number(cliente.devedor)
-- Number(venda.valor);
+Number(cliente.devedor || 0) - Number(venda.valor || 0);
 
 if(novoDevedor < 0){
 novoDevedor = 0;
 }
 
 await pool.query(
-
 `
 UPDATE clientes
 SET devedor=$1
 WHERE id=$2
 `,
-
 [
 novoDevedor,
 cliente.id
 ]
-
 );
 
 }
@@ -383,14 +341,13 @@ cliente.id
 }
 
 await pool.query(
-
 `
 DELETE FROM vendas
 WHERE id=$1
 `,
-
-[id]
-
+[
+req.params.id
+]
 );
 
 res.json({
@@ -407,13 +364,8 @@ erro:error.message
 
 });
 
-const PORT =
-process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-
-console.log(
-"Servidor rodando!"
-);
-
+console.log("Servidor rodando!");
 });
