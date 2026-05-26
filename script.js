@@ -1,12 +1,27 @@
-const STORAGE_VENDAS = "vendas_posto";
-const STORAGE_CLIENTES = "clientes_posto";
+const API = window.location.origin;
+
 const STORAGE_LITRO = "valor_litro";
+
+let VALOR_LITRO = 6.5;
 
 let ultimaQuantidadeVendas = 0;
 
+function formatarMoeda(valor){
+
+return Number(valor).toLocaleString(
+"pt-BR",
+{
+style:"currency",
+currency:"BRL"
+}
+);
+
+}
+
 function obterValorLitro(){
 
-const valor = localStorage.getItem(STORAGE_LITRO);
+const valor =
+localStorage.getItem(STORAGE_LITRO);
 
 if(!valor){
 return 6.5;
@@ -25,73 +40,84 @@ valor
 
 }
 
-let VALOR_LITRO = obterValorLitro();
+async function obterVendas(){
 
-function formatarMoeda(valor){
+const response =
+await fetch(`${API}/api/vendas`);
 
-return valor.toLocaleString(
-"pt-BR",
-{
-style:"currency",
-currency:"BRL"
+return await response.json();
+
 }
+
+async function obterClientes(){
+
+const response =
+await fetch(`${API}/api/clientes`);
+
+return await response.json();
+
+}
+
+async function cadastrarCliente(){
+
+const nome =
+document.getElementById(
+"nomeClienteCadastro"
+)?.value.trim();
+
+const telefone =
+document.getElementById(
+"telefoneCliente"
+)?.value.trim();
+
+const limite =
+Number(
+document.getElementById(
+"limiteCliente"
+)?.value
 );
 
-}
+if(!nome){
 
-function obterVendas(){
-
-try{
-
-const dados =
-localStorage.getItem(STORAGE_VENDAS);
-
-if(!dados){
-return [];
-}
-
-return JSON.parse(dados);
-
-}catch{
-return [];
-}
+alert("Digite o nome");
+return;
 
 }
 
-function salvarVendas(vendas){
+await fetch(`${API}/api/clientes`,{
 
-localStorage.setItem(
-STORAGE_VENDAS,
-JSON.stringify(vendas)
-);
+method:"POST",
 
-}
+headers:{
+"Content-Type":"application/json"
+},
 
-function obterClientes(){
+body:JSON.stringify({
 
-try{
+nome,
+telefone,
+limite,
+devedor:0
 
-const dados =
-localStorage.getItem(STORAGE_CLIENTES);
+})
 
-if(!dados){
-return [];
-}
+});
 
-return JSON.parse(dados);
+alert("Cliente cadastrado!");
 
-}catch{
-return [];
-}
+document.getElementById(
+"nomeClienteCadastro"
+).value = "";
 
-}
+document.getElementById(
+"telefoneCliente"
+).value = "";
 
-function salvarClientes(clientes){
+document.getElementById(
+"limiteCliente"
+).value = "";
 
-localStorage.setItem(
-STORAGE_CLIENTES,
-JSON.stringify(clientes)
-);
+carregarClientes();
 
 }
 
@@ -118,69 +144,7 @@ formatarMoeda(total);
 
 }
 
-function cadastrarCliente(){
-
-const nome =
-document.getElementById(
-"nomeClienteCadastro"
-)?.value.trim();
-
-const telefone =
-document.getElementById(
-"telefoneCliente"
-)?.value.trim();
-
-const limite =
-Number(
-document.getElementById(
-"limiteCliente"
-)?.value
-);
-
-if(!nome){
-
-alert("Digite o nome");
-return;
-
-}
-
-const clientes =
-obterClientes();
-
-clientes.push({
-
-id: crypto.randomUUID(),
-nome,
-telefone,
-limite,
-devedor:0
-
-});
-
-salvarClientes(clientes);
-
-alert("Cliente cadastrado!");
-
-document.getElementById(
-"nomeClienteCadastro"
-).value = "";
-
-document.getElementById(
-"telefoneCliente"
-).value = "";
-
-document.getElementById(
-"limiteCliente"
-).value = "";
-
-carregarClientes();
-
-}
-
-function registrarVenda(){
-
-VALOR_LITRO =
-obterValorLitro();
+async function registrarVenda(){
 
 const nome =
 document.getElementById(
@@ -209,67 +173,34 @@ return;
 const valor =
 litros * VALOR_LITRO;
 
-const vendas =
-obterVendas();
-
-const clientes =
-obterClientes();
-
-if(formaPagamento === "fiado"){
-
-const cliente =
-clientes.find(
-c => c.nome.toLowerCase()
-=== nome.toLowerCase()
-);
-
-if(!cliente){
-
-alert(
-"Cliente não cadastrado!"
-);
-
-return;
-
-}
-
-if(
-cliente.devedor + valor
-> cliente.limite
-){
-
-alert(
-"Limite do cliente excedido!"
-);
-
-return;
-
-}
-
-cliente.devedor += valor;
-
-salvarClientes(clientes);
-
-}
-
-vendas.unshift({
-
-id: crypto.randomUUID(),
-nome,
-litros,
-valor,
-formaPagamento,
-hora:new Date().toLocaleTimeString(
+const hora =
+new Date().toLocaleTimeString(
 "pt-BR",
 {
 hour:"2-digit",
 minute:"2-digit"
 }
-)
+);
+
+await fetch(`${API}/api/vendas`,{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+nome,
+litros,
+valor,
+formaPagamento,
+hora
+
+})
 
 });
-
-salvarVendas(vendas);
 
 document.getElementById(
 "nome"
@@ -285,73 +216,19 @@ alert("Venda registrada!");
 
 }
 
-function excluirVenda(id){
+async function excluirVenda(id){
 
-const vendas =
-obterVendas();
-
-const venda =
-vendas.find(v => v.id === id);
-
-if(venda && venda.formaPagamento === "fiado"){
-
-const clientes =
-obterClientes();
-
-const cliente =
-clientes.find(
-c => c.nome.toLowerCase()
-=== venda.nome.toLowerCase()
+alert(
+"Função excluir será integrada no backend"
 );
 
-if(cliente){
-
-cliente.devedor -= venda.valor;
-
-if(cliente.devedor < 0){
-cliente.devedor = 0;
 }
 
-salvarClientes(clientes);
+async function receberFiado(id){
 
-}
-
-}
-
-const novas =
-vendas.filter(
-v => v.id !== id
+alert(
+"Função receber será integrada no backend"
 );
-
-salvarVendas(novas);
-
-carregarAdmin();
-
-carregarClientes();
-
-}
-
-function receberFiado(id){
-
-const clientes =
-obterClientes();
-
-const cliente =
-clientes.find(c => c.id === id);
-
-if(!cliente){
-return;
-}
-
-cliente.devedor = 0;
-
-salvarClientes(clientes);
-
-carregarClientes();
-
-carregarAdmin();
-
-alert("Pagamento recebido!");
 
 }
 
@@ -370,7 +247,7 @@ mensagem
 
 }
 
-function carregarAdmin(){
+async function carregarAdmin(){
 
 const lista =
 document.getElementById(
@@ -382,10 +259,10 @@ return;
 }
 
 const vendas =
-obterVendas();
+await obterVendas();
 
 const clientes =
-obterClientes();
+await obterClientes();
 
 if(
 ultimaQuantidadeVendas !== 0 &&
@@ -402,18 +279,14 @@ vendas.length;
 lista.innerHTML = "";
 
 let totalLitros = 0;
-
 let totalPix = 0;
-
 let totalFiado = 0;
-
 let totalVendido = 0;
-
 let clientesDevendo = 0;
 
 clientes.forEach(cliente => {
 
-if(cliente.devedor > 0){
+if(Number(cliente.devedor) > 0){
 
 clientesDevendo++;
 
@@ -435,20 +308,16 @@ Nenhuma venda registrada
 
 vendas.forEach(item => {
 
-totalLitros += item.litros;
+totalLitros += Number(item.litros);
 
-totalVendido += item.valor;
+totalVendido += Number(item.valor);
 
-if(item.formaPagamento === "pix"){
-
-totalPix += item.valor;
-
+if(item.forma_pagamento === "pix"){
+totalPix += Number(item.valor);
 }
 
-if(item.formaPagamento === "fiado"){
-
-totalFiado += item.valor;
-
+if(item.forma_pagamento === "fiado"){
+totalFiado += Number(item.valor);
 }
 
 lista.innerHTML += `
@@ -457,7 +326,7 @@ lista.innerHTML += `
 
 <td>${item.nome}</td>
 
-<td>${item.formaPagamento}</td>
+<td>${item.forma_pagamento}</td>
 
 <td>${item.litros}L</td>
 
@@ -516,7 +385,7 @@ clientesDevendo;
 
 }
 
-function carregarClientes(){
+async function carregarClientes(){
 
 const lista =
 document.getElementById(
@@ -528,7 +397,7 @@ return;
 }
 
 const clientes =
-obterClientes();
+await obterClientes();
 
 lista.innerHTML = "";
 
@@ -554,7 +423,7 @@ lista.innerHTML += `
 
 <td>${cliente.telefone}</td>
 
-<td>${formatarMoeda(cliente.limite)}</td>
+<td>${formatarMoeda(cliente.limite_valor)}</td>
 
 <td>${formatarMoeda(cliente.devedor)}</td>
 
@@ -594,6 +463,9 @@ document.getElementById(
 if(!input || !btn){
 return;
 }
+
+VALOR_LITRO =
+obterValorLitro();
 
 input.value = VALOR_LITRO;
 
