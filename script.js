@@ -84,6 +84,7 @@ return;
 
 }
 
+const response =
 await fetch(`${API}/api/clientes`,{
 
 method:"POST",
@@ -103,6 +104,16 @@ devedor:0
 
 });
 
+const resposta =
+await response.json();
+
+if(!response.ok){
+
+alert(resposta.erro || "Erro ao cadastrar cliente");
+return;
+
+}
+
 alert("Cliente cadastrado!");
 
 document.getElementById(
@@ -117,7 +128,7 @@ document.getElementById(
 "limiteCliente"
 ).value = "";
 
-carregarClientes();
+await carregarClientes();
 
 }
 
@@ -283,6 +294,35 @@ await carregarClientes();
 await carregarAdmin();
 
 alert("Pagamento recebido!");
+
+}
+
+async function excluirCliente(id){
+
+if(!confirm("Deseja excluir este cliente?")){
+return;
+}
+
+const response =
+await fetch(`${API}/api/clientes/${id}`,{
+method:"DELETE"
+});
+
+const resposta =
+await response.json();
+
+if(!response.ok){
+
+alert(resposta.erro || "Erro ao excluir cliente");
+return;
+
+}
+
+await carregarClientes();
+
+await carregarAdmin();
+
+alert("Cliente excluído!");
 
 }
 
@@ -483,6 +523,8 @@ lista.innerHTML += `
 
 <td>
 
+<div style="display:flex;gap:10px;justify-content:center;">
+
 <button
 class="btnReceber"
 onclick="receberFiado('${cliente.id}')"
@@ -491,6 +533,17 @@ onclick="receberFiado('${cliente.id}')"
 Receber
 
 </button>
+
+<button
+class="btnExcluir"
+onclick="excluirCliente('${cliente.id}')"
+>
+
+Excluir
+
+</button>
+
+</div>
 
 </td>
 
