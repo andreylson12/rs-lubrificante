@@ -146,6 +146,9 @@ formatarMoeda(total);
 
 async function registrarVenda(){
 
+VALOR_LITRO =
+obterValorLitro();
+
 const nome =
 document.getElementById(
 "nome"
@@ -182,6 +185,7 @@ minute:"2-digit"
 }
 );
 
+const response =
 await fetch(`${API}/api/vendas`,{
 
 method:"POST",
@@ -202,6 +206,16 @@ hora
 
 });
 
+const resposta =
+await response.json();
+
+if(!response.ok){
+
+alert(resposta.erro || "Erro ao registrar venda");
+return;
+
+}
+
 document.getElementById(
 "nome"
 ).value = "";
@@ -218,17 +232,57 @@ alert("Venda registrada!");
 
 async function excluirVenda(id){
 
-alert(
-"Função excluir será integrada no backend"
-);
+if(!confirm("Deseja excluir esta venda?")){
+return;
+}
+
+const response =
+await fetch(`${API}/api/vendas/${id}`,{
+method:"DELETE"
+});
+
+const resposta =
+await response.json();
+
+if(!response.ok){
+
+alert(resposta.erro || "Erro ao excluir venda");
+return;
+
+}
+
+await carregarAdmin();
+
+await carregarClientes();
 
 }
 
 async function receberFiado(id){
 
-alert(
-"Função receber será integrada no backend"
-);
+if(!confirm("Confirmar recebimento deste fiado?")){
+return;
+}
+
+const response =
+await fetch(`${API}/api/clientes/${id}/receber`,{
+method:"PUT"
+});
+
+const resposta =
+await response.json();
+
+if(!response.ok){
+
+alert(resposta.erro || "Erro ao receber fiado");
+return;
+
+}
+
+await carregarClientes();
+
+await carregarAdmin();
+
+alert("Pagamento recebido!");
 
 }
 
