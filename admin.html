@@ -4,17 +4,11 @@
 <head>
 
 <script>
+const token = localStorage.getItem("admin_token");
 
-if(
-localStorage.getItem("admin_logado")
-!== "true"
-){
-
-window.location.href =
-"login.html";
-
+if(!token){
+window.location.href = "login.html";
 }
-
 </script>
 
 <meta charset="UTF-8">
@@ -36,37 +30,14 @@ window.location.href =
 
 <div class="abasAdmin">
 
-<button class="abaBtn ativa" data-aba="abaResumo">
-📊 Resumo
-</button>
-
-<button class="abaBtn" data-aba="abaFechamento">
-📆 Fechamento
-</button>
-
-<button class="abaBtn" data-aba="abaConfig">
-⚙️ Configuração
-</button>
-
-<button class="abaBtn" data-aba="abaClientes">
-👥 Clientes
-</button>
-
-<button class="abaBtn" data-aba="abaEntradas">
-📦 Entradas e Gastos
-</button>
-
-<button class="abaBtn" data-aba="abaVendas">
-💰 Vendas
-</button>
-
-<button class="abaBtn" data-aba="abaFiados">
-📒 Fiados
-</button>
-
-<button class="abaBtn" data-aba="abaMovimentacoes">
-📋 Movimentações
-</button>
+<button class="abaBtn ativa" data-aba="abaResumo">📊 Resumo</button>
+<button class="abaBtn" data-aba="abaFechamento">📆 Fechamento</button>
+<button class="abaBtn" data-aba="abaConfig">⚙️ Configuração</button>
+<button class="abaBtn" data-aba="abaClientes">👥 Clientes</button>
+<button class="abaBtn" data-aba="abaEntradas">📦 Entradas e Gastos</button>
+<button class="abaBtn" data-aba="abaVendas">💰 Vendas</button>
+<button class="abaBtn" data-aba="abaFiados">📒 Fiados</button>
+<button class="abaBtn" data-aba="abaMovimentacoes">📋 Movimentações</button>
 
 </div>
 
@@ -119,64 +90,38 @@ window.location.href =
 <div class="graficosGrid">
 
 <div class="graficoBox">
-
-<h2>
-💳 PIX x Fiado
-</h2>
+<h2>💳 PIX x Fiado</h2>
 
 <div class="barraGrafico">
-
-<div id="barraPix" class="barraPix">
-PIX
-</div>
-
-<div id="barraFiado" class="barraFiado">
-Fiado
-</div>
-
+<div id="barraPix" class="barraPix">PIX</div>
+<div id="barraFiado" class="barraFiado">Fiado</div>
 </div>
 
 <div class="legendaGrafico">
-
-<span>
-🟢 PIX: <b id="legendaPix">R$ 0,00</b>
-</span>
-
-<span>
-🟠 Fiado: <b id="legendaFiado">R$ 0,00</b>
-</span>
-
+<span>🟢 PIX: <b id="legendaPix">R$ 0,00</b></span>
+<span>🟠 Fiado: <b id="legendaFiado">R$ 0,00</b></span>
 </div>
 
 </div>
 
 <div class="graficoBox">
-
-<h2>
-📈 Vendas x Despesas
-</h2>
+<h2>📈 Vendas x Despesas</h2>
 
 <div class="barraVerticalBox">
 
 <div class="barraVerticalItem">
-
 <div id="barraVendas" class="barraVertical venda"></div>
 <span>Vendas</span>
-
 </div>
 
 <div class="barraVerticalItem">
-
 <div id="barraDespesas" class="barraVertical despesa"></div>
 <span>Despesas</span>
-
 </div>
 
 <div class="barraVerticalItem">
-
 <div id="barraLucro" class="barraVertical lucro"></div>
 <span>Lucro</span>
-
 </div>
 
 </div>
@@ -184,17 +129,10 @@ Fiado
 </div>
 
 <div class="graficoBox">
-
-<h2>
-🛢️ Nível do Estoque
-</h2>
+<h2>🛢️ Nível do Estoque</h2>
 
 <div class="estoqueNivel">
-
-<div id="barraEstoque" class="barraEstoque">
-0%
-</div>
-
+<div id="barraEstoque" class="barraEstoque">0%</div>
 </div>
 
 <p class="textoEstoque" id="textoEstoque">
@@ -211,9 +149,7 @@ Estoque calculado pelas entradas menos vendas.
 
 <div class="clientesBox">
 
-<h2>
-📆 Fechamento Diário
-</h2>
+<h2>📆 Fechamento Diário</h2>
 
 <div class="cardsInfo">
 
@@ -257,18 +193,11 @@ Estoque calculado pelas entradas menos vendas.
 
 <div class="configBox">
 
-<h2>
-⚙️ Configuração do Litro
-</h2>
+<h2>⚙️ Configuração do Litro</h2>
 
 <div class="configFlex">
 
-<input
-id="novoValorLitro"
-type="number"
-step="0.01"
-placeholder="Valor do litro"
->
+<input id="novoValorLitro" type="number" step="0.01" placeholder="Valor do litro">
 
 <button id="btnSalvarLitro">
 Salvar Valor
@@ -278,35 +207,23 @@ Salvar Valor
 
 </div>
 
+<button id="btnSair" class="btnExcluir">
+Sair do Admin
+</button>
+
 </div>
 
 <div id="abaClientes" class="conteudoAba">
 
 <div class="clientesBox">
 
-<h2>
-👥 Cadastro de Clientes
-</h2>
+<h2>👥 Cadastro de Clientes</h2>
 
 <div class="configFlex">
 
-<input
-id="nomeClienteCadastro"
-type="text"
-placeholder="Nome do cliente"
->
-
-<input
-id="telefoneCliente"
-type="text"
-placeholder="Telefone"
->
-
-<input
-id="limiteCliente"
-type="number"
-placeholder="Limite de fiado"
->
+<input id="nomeClienteCadastro" type="text" placeholder="Nome do cliente">
+<input id="telefoneCliente" type="text" placeholder="Telefone">
+<input id="limiteCliente" type="number" placeholder="Limite de fiado">
 
 <button id="btnCadastrarCliente">
 Cadastrar Cliente
@@ -318,24 +235,18 @@ Cadastrar Cliente
 
 <div class="clientesTabela">
 
-<h2>
-👥 Clientes Cadastrados
-</h2>
+<h2>👥 Clientes Cadastrados</h2>
 
 <table>
 
 <thead>
-
 <tr>
-
 <th>Cliente</th>
 <th>Telefone</th>
 <th>Limite</th>
 <th>Devedor</th>
 <th>Ação</th>
-
 </tr>
-
 </thead>
 
 <tbody id="listaClientes"></tbody>
@@ -350,41 +261,18 @@ Cadastrar Cliente
 
 <div class="clientesBox">
 
-<h2>
-📦 Entrada / Gastos
-</h2>
+<h2>📦 Entrada / Gastos</h2>
 
 <div class="configFlex">
 
 <select id="tipoMovimentacao">
-
-<option value="entrada">
-Entrada Combustível
-</option>
-
-<option value="despesa">
-Despesa
-</option>
-
+<option value="entrada">Entrada Combustível</option>
+<option value="despesa">Despesa</option>
 </select>
 
-<input
-id="descricaoMovimentacao"
-type="text"
-placeholder="Descrição"
->
-
-<input
-id="litrosMovimentacao"
-type="number"
-placeholder="Litros"
->
-
-<input
-id="valorMovimentacao"
-type="number"
-placeholder="Valor"
->
+<input id="descricaoMovimentacao" type="text" placeholder="Descrição">
+<input id="litrosMovimentacao" type="number" placeholder="Litros">
+<input id="valorMovimentacao" type="number" placeholder="Valor">
 
 <button id="btnMovimentacao">
 Salvar
@@ -400,25 +288,19 @@ Salvar
 
 <div class="tabelaBox">
 
-<h2>
-💰 Vendas
-</h2>
+<h2>💰 Vendas</h2>
 
 <table>
 
 <thead>
-
 <tr>
-
 <th>Cliente</th>
 <th>Pagamento</th>
 <th>Litros</th>
 <th>Valor</th>
 <th>Hora</th>
 <th>Ação</th>
-
 </tr>
-
 </thead>
 
 <tbody id="listaVendas"></tbody>
@@ -433,24 +315,18 @@ Salvar
 
 <div class="clientesTabela">
 
-<h2>
-📒 Clientes Fiado
-</h2>
+<h2>📒 Clientes Fiado</h2>
 
 <table>
 
 <thead>
-
 <tr>
-
 <th>Cliente</th>
 <th>Telefone</th>
 <th>Limite</th>
 <th>Devedor</th>
 <th>Ação</th>
-
 </tr>
-
 </thead>
 
 <tbody id="listaClientesFiado"></tbody>
@@ -465,25 +341,19 @@ Salvar
 
 <div class="clientesTabela">
 
-<h2>
-📋 Movimentações
-</h2>
+<h2>📋 Movimentações</h2>
 
 <table>
 
 <thead>
-
 <tr>
-
 <th>Tipo</th>
 <th>Descrição</th>
 <th>Litros</th>
 <th>Valor</th>
 <th>Data</th>
 <th>Hora</th>
-
 </tr>
-
 </thead>
 
 <tbody id="listaMovimentacoes"></tbody>
