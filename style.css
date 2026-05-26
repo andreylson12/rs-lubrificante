@@ -242,6 +242,56 @@ padding:30px;
 color:#94a3b8;
 }
 
+.abasAdmin{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-bottom:20px;
+}
+
+.abaBtn{
+background:#1e293b;
+color:white;
+border:none;
+padding:14px 18px;
+border-radius:12px;
+cursor:pointer;
+font-weight:bold;
+transition:0.2s;
+}
+
+.abaBtn:hover{
+background:#334155;
+}
+
+.abaBtn.ativa{
+background:#38bdf8;
+color:#0f172a;
+}
+
+.conteudoAba{
+display:none;
+animation:fade 0.2s ease;
+}
+
+.conteudoAba.ativo{
+display:block;
+}
+
+@keyframes fade{
+
+from{
+opacity:0;
+transform:translateY(10px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
+}
+
 @media(max-width:768px){
 
 .containerCliente,
@@ -297,11 +347,27 @@ font-size:12px;
 padding:10px;
 }
 
+.abasAdmin{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.abaBtn{
+width:100%;
+font-size:14px;
+padding:12px;
+}
+
 }
 
 @media(max-width:480px){
 
 .cardsInfo{
+grid-template-columns:1fr;
+}
+
+.abasAdmin{
 grid-template-columns:1fr;
 }
 
