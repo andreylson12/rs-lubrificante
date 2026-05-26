@@ -1,42 +1,132 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Painel Admin</title>
+
 <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
 
 <div class="containerAdmin">
 
-<h1 class="tituloAdmin">🔐 Painel Admin</h1>
+<h1 class="tituloAdmin">
+🔐 Painel Admin
+</h1>
 
 <div class="configBox">
-<h2>⚙️ Configuração do Litro</h2>
+
+<h2>
+⚙️ Configuração do Litro
+</h2>
 
 <div class="configFlex">
-<input id="novoValorLitro" type="number" step="0.01" placeholder="Valor do litro">
-<button id="btnSalvarLitro">Salvar Valor</button>
+
+<input
+id="novoValorLitro"
+type="number"
+step="0.01"
+placeholder="Valor do litro"
+>
+
+<button id="btnSalvarLitro">
+Salvar Valor
+</button>
+
 </div>
+
 </div>
 
 <div class="clientesBox">
-<h2>👥 Cadastro de Clientes</h2>
+
+<h2>
+👥 Cadastro de Clientes
+</h2>
 
 <div class="configFlex">
-<input id="nomeClienteCadastro" type="text" placeholder="Nome do cliente">
-<input id="telefoneCliente" type="text" placeholder="Telefone">
-<input id="limiteCliente" type="number" placeholder="Limite de fiado">
-<button id="btnCadastrarCliente">Cadastrar Cliente</button>
+
+<input
+id="nomeClienteCadastro"
+type="text"
+placeholder="Nome do cliente"
+>
+
+<input
+id="telefoneCliente"
+type="text"
+placeholder="Telefone"
+>
+
+<input
+id="limiteCliente"
+type="number"
+placeholder="Limite de fiado"
+>
+
+<button id="btnCadastrarCliente">
+Cadastrar Cliente
+</button>
+
 </div>
+
+</div>
+
+<div class="clientesBox">
+
+<h2>
+📦 Entrada / Gastos
+</h2>
+
+<div class="configFlex">
+
+<select id="tipoMovimentacao">
+
+<option value="entrada">
+Entrada Combustível
+</option>
+
+<option value="despesa">
+Despesa
+</option>
+
+</select>
+
+<input
+id="descricaoMovimentacao"
+type="text"
+placeholder="Descrição"
+>
+
+<input
+id="litrosMovimentacao"
+type="number"
+placeholder="Litros"
+>
+
+<input
+id="valorMovimentacao"
+type="number"
+placeholder="Valor"
+>
+
+<button id="btnMovimentacao">
+Salvar
+</button>
+
+</div>
+
 </div>
 
 <div class="cardsInfo">
 
 <div class="infoCard">
-<h3>Total Litros</h3>
+<h3>Total Litros Vendidos</h3>
 <span id="totalLitros">0L</span>
 </div>
 
@@ -56,52 +146,109 @@
 </div>
 
 <div class="infoCard">
-<h3>Total Vendas</h3>
-<span id="totalVendas">0</span>
+<h3>Clientes Devendo</h3>
+<span id="clientesDevendo">0</span>
 </div>
 
 <div class="infoCard">
-<h3>Clientes Devendo</h3>
-<span id="clientesDevendo">0</span>
+<h3>Estoque Atual</h3>
+<span id="estoqueAtual">0L</span>
+</div>
+
+<div class="infoCard">
+<h3>Total Despesas</h3>
+<span id="totalDespesas">R$ 0,00</span>
+</div>
+
+<div class="infoCard">
+<h3>Lucro Estimado</h3>
+<span id="lucroEstimado">R$ 0,00</span>
 </div>
 
 </div>
 
 <div class="tabelaBox">
 
+<h2>
+💰 Vendas
+</h2>
+
 <table>
+
 <thead>
+
 <tr>
+
 <th>Cliente</th>
 <th>Pagamento</th>
 <th>Litros</th>
 <th>Valor</th>
 <th>Hora</th>
 <th>Ação</th>
+
 </tr>
+
 </thead>
 
 <tbody id="listaVendas"></tbody>
+
 </table>
 
 </div>
 
 <div class="clientesTabela">
 
-<h2>📒 Clientes Fiado</h2>
+<h2>
+📒 Clientes Fiado
+</h2>
 
 <table>
+
 <thead>
+
 <tr>
+
 <th>Cliente</th>
 <th>Telefone</th>
 <th>Limite</th>
 <th>Devedor</th>
 <th>Ação</th>
+
 </tr>
+
 </thead>
 
 <tbody id="listaClientes"></tbody>
+
+</table>
+
+</div>
+
+<div class="clientesTabela">
+
+<h2>
+📦 Movimentações
+</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Tipo</th>
+<th>Descrição</th>
+<th>Litros</th>
+<th>Valor</th>
+<th>Data</th>
+<th>Hora</th>
+
+</tr>
+
+</thead>
+
+<tbody id="listaMovimentacoes"></tbody>
+
 </table>
 
 </div>
@@ -109,5 +256,6 @@
 </div>
 
 <script src="script.js"></script>
+
 </body>
 </html>
