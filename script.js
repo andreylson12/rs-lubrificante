@@ -58,6 +58,15 @@ return await response.json();
 
 }
 
+async function obterMovimentacoes(){
+
+const response =
+await fetch(`${API}/api/movimentacoes`);
+
+return await response.json();
+
+}
+
 async function cadastrarCliente(){
 
 const nome =
@@ -266,6 +275,8 @@ await carregarAdmin();
 
 await carregarClientes();
 
+await carregarMovimentacoes();
+
 }
 
 async function receberFiado(id){
@@ -326,6 +337,137 @@ alert("Cliente excluído!");
 
 }
 
+async function salvarMovimentacao(){
+
+const tipo =
+document.getElementById(
+"tipoMovimentacao"
+)?.value;
+
+const descricao =
+document.getElementById(
+"descricaoMovimentacao"
+)?.value.trim();
+
+const litros =
+Number(
+document.getElementById(
+"litrosMovimentacao"
+)?.value || 0
+);
+
+const valor =
+Number(
+document.getElementById(
+"valorMovimentacao"
+)?.value || 0
+);
+
+if(!tipo){
+
+alert("Selecione o tipo");
+return;
+
+}
+
+if(!descricao){
+
+alert("Digite a descrição");
+return;
+
+}
+
+if(tipo === "entrada" && litros <= 0){
+
+alert("Informe os litros da entrada");
+return;
+
+}
+
+if(valor < 0){
+
+alert("Valor inválido");
+return;
+
+}
+
+const response =
+await fetch(`${API}/api/movimentacoes`,{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+tipo,
+descricao,
+litros,
+valor
+
+})
+
+});
+
+const resposta =
+await response.json();
+
+if(!response.ok){
+
+alert(resposta.erro || "Erro ao salvar movimentação");
+return;
+
+}
+
+document.getElementById(
+"descricaoMovimentacao"
+).value = "";
+
+document.getElementById(
+"litrosMovimentacao"
+).value = "";
+
+document.getElementById(
+"valorMovimentacao"
+).value = "";
+
+await carregarMovimentacoes();
+
+await carregarAdmin();
+
+alert("Movimentação salva!");
+
+}
+
+async function excluirMovimentacao(id){
+
+if(!confirm("Deseja excluir esta movimentação?")){
+return;
+}
+
+const response =
+await fetch(`${API}/api/movimentacoes/${id}`,{
+method:"DELETE"
+});
+
+const resposta =
+await response.json();
+
+if(!response.ok){
+
+alert(resposta.erro || "Erro ao excluir movimentação");
+return;
+
+}
+
+await carregarMovimentacoes();
+
+await carregarAdmin();
+
+}
+
 function tocarAlerta(){
 
 const mensagem =
@@ -358,6 +500,9 @@ await obterVendas();
 const clientes =
 await obterClientes();
 
+const movimentacoes =
+await obterMovimentacoes();
+
 if(
 ultimaQuantidadeVendas !== 0 &&
 vendas.length > ultimaQuantidadeVendas
@@ -377,6 +522,8 @@ let totalPix = 0;
 let totalFiado = 0;
 let totalVendido = 0;
 let clientesDevendo = 0;
+let totalEntradasLitros = 0;
+let totalDespesas = 0;
 
 clientes.forEach(cliente => {
 
@@ -387,6 +534,50 @@ clientesDevendo++;
 }
 
 });
+
+vendas.forEach(item => {
+
+totalLitros += Number(item.litros || 0);
+
+totalVendido += Number(item.valor || 0);
+
+if(item.forma_pagamento === "pix"){
+totalPix += Number(item.valor || 0);
+}
+
+if(item.forma_pagamento === "fiado"){
+totalFiado += Number(item.valor || 0);
+}
+
+});
+
+movimentacoes.forEach(item => {
+
+if(item.tipo === "entrada"){
+
+totalEntradasLitros += Number(item.litros || 0);
+
+}
+
+if(item.tipo === "despesa"){
+
+totalDespesas += Number(item.valor || 0);
+
+}
+
+if(item.tipo === "entrada"){
+
+totalDespesas += Number(item.valor || 0);
+
+}
+
+});
+
+const estoqueAtual =
+totalEntradasLitros - totalLitros;
+
+const lucroEstimado =
+totalVendido - totalDespesas;
 
 if(vendas.length === 0){
 
@@ -401,18 +592,6 @@ Nenhuma venda registrada
 }
 
 vendas.forEach(item => {
-
-totalLitros += Number(item.litros);
-
-totalVendido += Number(item.valor);
-
-if(item.forma_pagamento === "pix"){
-totalPix += Number(item.valor);
-}
-
-if(item.forma_pagamento === "fiado"){
-totalFiado += Number(item.valor);
-}
 
 lista.innerHTML += `
 
@@ -467,15 +646,56 @@ document.getElementById(
 ).innerText =
 formatarMoeda(totalVendido);
 
-document.getElementById(
-"totalVendas"
-).innerText =
+const totalVendasCard =
+document.getElementById("totalVendas");
+
+if(totalVendasCard){
+
+totalVendasCard.innerText =
 vendas.length;
+
+}
 
 document.getElementById(
 "clientesDevendo"
 ).innerText =
 clientesDevendo;
+
+const estoqueHTML =
+document.getElementById(
+"estoqueAtual"
+);
+
+if(estoqueHTML){
+
+estoqueHTML.innerText =
+`${estoqueAtual}L`;
+
+}
+
+const despesasHTML =
+document.getElementById(
+"totalDespesas"
+);
+
+if(despesasHTML){
+
+despesasHTML.innerText =
+formatarMoeda(totalDespesas);
+
+}
+
+const lucroHTML =
+document.getElementById(
+"lucroEstimado"
+);
+
+if(lucroHTML){
+
+lucroHTML.innerText =
+formatarMoeda(lucroEstimado);
+
+}
 
 }
 
@@ -537,6 +757,77 @@ Receber
 <button
 class="btnExcluir"
 onclick="excluirCliente('${cliente.id}')"
+>
+
+Excluir
+
+</button>
+
+</div>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+async function carregarMovimentacoes(){
+
+const lista =
+document.getElementById(
+"listaMovimentacoes"
+);
+
+if(!lista){
+return;
+}
+
+const movimentacoes =
+await obterMovimentacoes();
+
+lista.innerHTML = "";
+
+if(movimentacoes.length === 0){
+
+lista.innerHTML = `
+<tr>
+<td colspan="6" class="semVendas">
+Nenhuma movimentação registrada
+</td>
+</tr>
+`;
+
+}
+
+movimentacoes.forEach(item => {
+
+lista.innerHTML += `
+
+<tr>
+
+<td>${item.tipo}</td>
+
+<td>${item.descricao}</td>
+
+<td>${Number(item.litros || 0)}L</td>
+
+<td>${formatarMoeda(item.valor)}</td>
+
+<td>${item.data}</td>
+
+<td>
+
+<div style="display:flex;gap:10px;justify-content:center;align-items:center;">
+
+<span>${item.hora}</span>
+
+<button
+class="btnExcluir"
+onclick="excluirMovimentacao('${item.id}')"
 >
 
 Excluir
@@ -624,6 +915,11 @@ document.getElementById(
 "btnCadastrarCliente"
 );
 
+const btnMovimentacao =
+document.getElementById(
+"btnMovimentacao"
+);
+
 if(litros){
 
 litros.addEventListener(
@@ -653,16 +949,28 @@ cadastrarCliente
 
 }
 
+if(btnMovimentacao){
+
+btnMovimentacao.addEventListener(
+"click",
+salvarMovimentacao
+);
+
+}
+
 configurarValorLitro();
 
 carregarAdmin();
 
 carregarClientes();
 
+carregarMovimentacoes();
+
 setInterval(() => {
 
 carregarAdmin();
 carregarClientes();
+carregarMovimentacoes();
 
 }, 3000);
 
