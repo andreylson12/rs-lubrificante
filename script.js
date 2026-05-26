@@ -152,15 +152,15 @@ VALOR_LITRO =
 obterValorLitro();
 
 const nome =
-document.getElementById("nome").value.trim();
+document.getElementById("nome")?.value.trim();
 
 const litros =
-Number(document.getElementById("litros").value);
+Number(document.getElementById("litros")?.value);
 
 const formaPagamento =
-document.getElementById("formaPagamento").value;
+document.getElementById("formaPagamento")?.value;
 
-if(nome.length < 2){
+if(!nome || nome.length < 2){
 
 alert("Digite um nome válido");
 return;
@@ -328,20 +328,6 @@ return;
 
 }
 
-if(tipo === "entrada" && litros <= 0){
-
-alert("Informe os litros da entrada");
-return;
-
-}
-
-if(valor < 0){
-
-alert("Valor inválido");
-return;
-
-}
-
 const response =
 await fetch(`${API}/api/movimentacoes`,{
 
@@ -416,25 +402,19 @@ new SpeechSynthesisUtterance(
 
 mensagem.lang = "pt-BR";
 
-speechSynthesis.speak(
-mensagem
-);
+speechSynthesis.speak(mensagem);
 
 }
 
-function atualizarGraficos(totalPix,totalFiado,totalVendido,totalDespesas,lucroEstimado,estoqueAtual,totalEntradasLitros){
-
-const barraPix =
-document.getElementById("barraPix");
-
-const barraFiado =
-document.getElementById("barraFiado");
-
-const legendaPix =
-document.getElementById("legendaPix");
-
-const legendaFiado =
-document.getElementById("legendaFiado");
+function atualizarGraficos(
+totalPix,
+totalFiado,
+totalVendido,
+totalDespesas,
+lucroEstimado,
+estoqueAtual,
+totalEntradasLitros
+){
 
 const totalPagamentos =
 totalPix + totalFiado;
@@ -452,53 +432,85 @@ porcentagemFiado =
 
 }
 
+const barraPix =
+document.getElementById("barraPix");
+
 if(barraPix){
-barraPix.style.width = `${porcentagemPix}%`;
-barraPix.innerText = `PIX ${porcentagemPix.toFixed(0)}%`;
+
+barraPix.style.width =
+`${porcentagemPix}%`;
+
+barraPix.innerText =
+`PIX ${porcentagemPix.toFixed(0)}%`;
+
 }
+
+const barraFiado =
+document.getElementById("barraFiado");
 
 if(barraFiado){
-barraFiado.style.width = `${porcentagemFiado}%`;
-barraFiado.innerText = `Fiado ${porcentagemFiado.toFixed(0)}%`;
+
+barraFiado.style.width =
+`${porcentagemFiado}%`;
+
+barraFiado.innerText =
+`Fiado ${porcentagemFiado.toFixed(0)}%`;
+
 }
+
+const legendaPix =
+document.getElementById("legendaPix");
 
 if(legendaPix){
-legendaPix.innerText = formatarMoeda(totalPix);
+legendaPix.innerText =
+formatarMoeda(totalPix);
 }
 
+const legendaFiado =
+document.getElementById("legendaFiado");
+
 if(legendaFiado){
-legendaFiado.innerText = formatarMoeda(totalFiado);
+legendaFiado.innerText =
+formatarMoeda(totalFiado);
 }
 
 const maiorValor =
-Math.max(totalVendido,totalDespesas,lucroEstimado,1);
+Math.max(
+totalVendido,
+totalDespesas,
+lucroEstimado,
+1
+);
 
 const barraVendas =
 document.getElementById("barraVendas");
 
+if(barraVendas){
+
+barraVendas.style.height =
+`${Math.max((totalVendido/maiorValor)*180,10)}px`;
+
+}
+
 const barraDespesas =
 document.getElementById("barraDespesas");
+
+if(barraDespesas){
+
+barraDespesas.style.height =
+`${Math.max((totalDespesas/maiorValor)*180,10)}px`;
+
+}
 
 const barraLucro =
 document.getElementById("barraLucro");
 
-if(barraVendas){
-barraVendas.style.height = `${Math.max((totalVendido / maiorValor) * 180,10)}px`;
-}
-
-if(barraDespesas){
-barraDespesas.style.height = `${Math.max((totalDespesas / maiorValor) * 180,10)}px`;
-}
-
 if(barraLucro){
-barraLucro.style.height = `${Math.max((lucroEstimado / maiorValor) * 180,10)}px`;
+
+barraLucro.style.height =
+`${Math.max((lucroEstimado/maiorValor)*180,10)}px`;
+
 }
-
-const barraEstoque =
-document.getElementById("barraEstoque");
-
-const textoEstoque =
-document.getElementById("textoEstoque");
 
 let porcentagemEstoque = 0;
 
@@ -517,12 +529,21 @@ if(porcentagemEstoque > 100){
 porcentagemEstoque = 100;
 }
 
+const barraEstoque =
+document.getElementById("barraEstoque");
+
 if(barraEstoque){
 
-barraEstoque.style.width = `${porcentagemEstoque}%`;
-barraEstoque.innerText = `${porcentagemEstoque.toFixed(0)}%`;
+barraEstoque.style.width =
+`${porcentagemEstoque}%`;
+
+barraEstoque.innerText =
+`${porcentagemEstoque.toFixed(0)}%`;
 
 }
+
+const textoEstoque =
+document.getElementById("textoEstoque");
 
 if(textoEstoque){
 
@@ -619,18 +640,6 @@ totalEntradasLitros - totalLitros;
 const lucroEstimado =
 totalVendido - totalDespesas;
 
-if(vendas.length === 0){
-
-lista.innerHTML = `
-<tr>
-<td colspan="6" class="semVendas">
-Nenhuma venda registrada
-</td>
-</tr>
-`;
-
-}
-
 vendas.forEach(item => {
 
 lista.innerHTML += `
@@ -666,61 +675,29 @@ Excluir
 
 });
 
-const totalLitrosHTML =
-document.getElementById("totalLitros");
+document.getElementById("totalLitros").innerText =
+`${totalLitros}L`;
 
-if(totalLitrosHTML){
-totalLitrosHTML.innerText = `${totalLitros}L`;
-}
+document.getElementById("totalPix").innerText =
+formatarMoeda(totalPix);
 
-const totalPixHTML =
-document.getElementById("totalPix");
+document.getElementById("totalFiado").innerText =
+formatarMoeda(totalFiado);
 
-if(totalPixHTML){
-totalPixHTML.innerText = formatarMoeda(totalPix);
-}
+document.getElementById("totalVendido").innerText =
+formatarMoeda(totalVendido);
 
-const totalFiadoHTML =
-document.getElementById("totalFiado");
+document.getElementById("clientesDevendo").innerText =
+clientesDevendo;
 
-if(totalFiadoHTML){
-totalFiadoHTML.innerText = formatarMoeda(totalFiado);
-}
+document.getElementById("estoqueAtual").innerText =
+`${estoqueAtual}L`;
 
-const totalVendidoHTML =
-document.getElementById("totalVendido");
+document.getElementById("totalDespesas").innerText =
+formatarMoeda(totalDespesas);
 
-if(totalVendidoHTML){
-totalVendidoHTML.innerText = formatarMoeda(totalVendido);
-}
-
-const clientesDevendoHTML =
-document.getElementById("clientesDevendo");
-
-if(clientesDevendoHTML){
-clientesDevendoHTML.innerText = clientesDevendo;
-}
-
-const estoqueHTML =
-document.getElementById("estoqueAtual");
-
-if(estoqueHTML){
-estoqueHTML.innerText = `${estoqueAtual}L`;
-}
-
-const despesasHTML =
-document.getElementById("totalDespesas");
-
-if(despesasHTML){
-despesasHTML.innerText = formatarMoeda(totalDespesas);
-}
-
-const lucroHTML =
-document.getElementById("lucroEstimado");
-
-if(lucroHTML){
-lucroHTML.innerText = formatarMoeda(lucroEstimado);
-}
+document.getElementById("lucroEstimado").innerText =
+formatarMoeda(lucroEstimado);
 
 atualizarGraficos(
 totalPix,
@@ -731,6 +708,95 @@ lucroEstimado,
 estoqueAtual,
 totalEntradasLitros
 );
+
+const hoje =
+new Date().toLocaleDateString("pt-BR");
+
+let vendasHoje = 0;
+let pixHoje = 0;
+let fiadoHoje = 0;
+let despesasHoje = 0;
+let litrosHoje = 0;
+
+vendas.forEach(item => {
+
+vendasHoje += Number(item.valor || 0);
+
+litrosHoje += Number(item.litros || 0);
+
+if(item.forma_pagamento === "pix"){
+pixHoje += Number(item.valor || 0);
+}
+
+if(item.forma_pagamento === "fiado"){
+fiadoHoje += Number(item.valor || 0);
+}
+
+});
+
+movimentacoes.forEach(item => {
+
+if(
+item.tipo === "despesa" &&
+item.data === hoje
+){
+
+despesasHoje += Number(item.valor || 0);
+
+}
+
+});
+
+const lucroHoje =
+vendasHoje - despesasHoje;
+
+const fechamentoVendas =
+document.getElementById("fechamentoVendas");
+
+if(fechamentoVendas){
+fechamentoVendas.innerText =
+formatarMoeda(vendasHoje);
+}
+
+const fechamentoPix =
+document.getElementById("fechamentoPix");
+
+if(fechamentoPix){
+fechamentoPix.innerText =
+formatarMoeda(pixHoje);
+}
+
+const fechamentoFiado =
+document.getElementById("fechamentoFiado");
+
+if(fechamentoFiado){
+fechamentoFiado.innerText =
+formatarMoeda(fiadoHoje);
+}
+
+const fechamentoDespesas =
+document.getElementById("fechamentoDespesas");
+
+if(fechamentoDespesas){
+fechamentoDespesas.innerText =
+formatarMoeda(despesasHoje);
+}
+
+const fechamentoLucro =
+document.getElementById("fechamentoLucro");
+
+if(fechamentoLucro){
+fechamentoLucro.innerText =
+formatarMoeda(lucroHoje);
+}
+
+const fechamentoLitros =
+document.getElementById("fechamentoLitros");
+
+if(fechamentoLitros){
+fechamentoLitros.innerText =
+`${litrosHoje}L`;
+}
 
 }
 
@@ -748,18 +814,6 @@ await obterClientes();
 if(lista){
 
 lista.innerHTML = "";
-
-if(clientes.length === 0){
-
-lista.innerHTML = `
-<tr>
-<td colspan="5" class="semVendas">
-Nenhum cliente cadastrado
-</td>
-</tr>
-`;
-
-}
 
 clientes.forEach(cliente => {
 
@@ -814,19 +868,9 @@ if(listaFiado){
 listaFiado.innerHTML = "";
 
 const clientesFiado =
-clientes.filter(cliente => Number(cliente.devedor) > 0);
-
-if(clientesFiado.length === 0){
-
-listaFiado.innerHTML = `
-<tr>
-<td colspan="5" class="semVendas">
-Nenhum cliente devendo
-</td>
-</tr>
-`;
-
-}
+clientes.filter(cliente =>
+Number(cliente.devedor) > 0
+);
 
 clientesFiado.forEach(cliente => {
 
@@ -891,18 +935,6 @@ const movimentacoes =
 await obterMovimentacoes();
 
 lista.innerHTML = "";
-
-if(movimentacoes.length === 0){
-
-lista.innerHTML = `
-<tr>
-<td colspan="6" class="semVendas">
-Nenhuma movimentação registrada
-</td>
-</tr>
-`;
-
-}
 
 movimentacoes.forEach(item => {
 
@@ -999,10 +1031,6 @@ document.querySelectorAll(".abaBtn");
 const conteudosAbas =
 document.querySelectorAll(".conteudoAba");
 
-if(abasBtns.length === 0){
-return;
-}
-
 abasBtns.forEach(botao => {
 
 botao.addEventListener(
@@ -1022,12 +1050,9 @@ conteudo.classList.remove("ativo");
 
 botao.classList.add("ativa");
 
-const conteudoAlvo =
-document.getElementById(alvo);
-
-if(conteudoAlvo){
-conteudoAlvo.classList.add("ativo");
-}
+document
+.getElementById(alvo)
+.classList.add("ativo");
 
 }
 );
