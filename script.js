@@ -125,17 +125,9 @@ return;
 
 alert("Cliente cadastrado!");
 
-document.getElementById(
-"nomeClienteCadastro"
-).value = "";
-
-document.getElementById(
-"telefoneCliente"
-).value = "";
-
-document.getElementById(
-"limiteCliente"
-).value = "";
+document.getElementById("nomeClienteCadastro").value = "";
+document.getElementById("telefoneCliente").value = "";
+document.getElementById("limiteCliente").value = "";
 
 await carregarClientes();
 
@@ -170,21 +162,15 @@ VALOR_LITRO =
 obterValorLitro();
 
 const nome =
-document.getElementById(
-"nome"
-).value.trim();
+document.getElementById("nome").value.trim();
 
 const litros =
 Number(
-document.getElementById(
-"litros"
-).value
+document.getElementById("litros").value
 );
 
 const formaPagamento =
-document.getElementById(
-"formaPagamento"
-).value;
+document.getElementById("formaPagamento").value;
 
 if(nome.length < 2){
 
@@ -236,13 +222,8 @@ return;
 
 }
 
-document.getElementById(
-"nome"
-).value = "";
-
-document.getElementById(
-"litros"
-).value = "1";
+document.getElementById("nome").value = "";
+document.getElementById("litros").value = "1";
 
 atualizarValor();
 
@@ -272,9 +253,7 @@ return;
 }
 
 await carregarAdmin();
-
 await carregarClientes();
-
 await carregarMovimentacoes();
 
 }
@@ -301,7 +280,6 @@ return;
 }
 
 await carregarClientes();
-
 await carregarAdmin();
 
 alert("Pagamento recebido!");
@@ -330,7 +308,6 @@ return;
 }
 
 await carregarClientes();
-
 await carregarAdmin();
 
 alert("Cliente excluído!");
@@ -340,27 +317,19 @@ alert("Cliente excluído!");
 async function salvarMovimentacao(){
 
 const tipo =
-document.getElementById(
-"tipoMovimentacao"
-)?.value;
+document.getElementById("tipoMovimentacao")?.value;
 
 const descricao =
-document.getElementById(
-"descricaoMovimentacao"
-)?.value.trim();
+document.getElementById("descricaoMovimentacao")?.value.trim();
 
 const litros =
 Number(
-document.getElementById(
-"litrosMovimentacao"
-)?.value || 0
+document.getElementById("litrosMovimentacao")?.value || 0
 );
 
 const valor =
 Number(
-document.getElementById(
-"valorMovimentacao"
-)?.value || 0
+document.getElementById("valorMovimentacao")?.value || 0
 );
 
 if(!tipo){
@@ -421,20 +390,11 @@ return;
 
 }
 
-document.getElementById(
-"descricaoMovimentacao"
-).value = "";
-
-document.getElementById(
-"litrosMovimentacao"
-).value = "";
-
-document.getElementById(
-"valorMovimentacao"
-).value = "";
+document.getElementById("descricaoMovimentacao").value = "";
+document.getElementById("litrosMovimentacao").value = "";
+document.getElementById("valorMovimentacao").value = "";
 
 await carregarMovimentacoes();
-
 await carregarAdmin();
 
 alert("Movimentação salva!");
@@ -463,7 +423,6 @@ return;
 }
 
 await carregarMovimentacoes();
-
 await carregarAdmin();
 
 }
@@ -486,9 +445,7 @@ mensagem
 async function carregarAdmin(){
 
 const lista =
-document.getElementById(
-"listaVendas"
-);
+document.getElementById("listaVendas");
 
 if(!lista){
 return;
@@ -538,7 +495,6 @@ clientesDevendo++;
 vendas.forEach(item => {
 
 totalLitros += Number(item.litros || 0);
-
 totalVendido += Number(item.valor || 0);
 
 if(item.forma_pagamento === "pix"){
@@ -556,16 +512,11 @@ movimentacoes.forEach(item => {
 if(item.tipo === "entrada"){
 
 totalEntradasLitros += Number(item.litros || 0);
-
-}
-
-if(item.tipo === "despesa"){
-
 totalDespesas += Number(item.valor || 0);
 
 }
 
-if(item.tipo === "entrada"){
+if(item.tipo === "despesa"){
 
 totalDespesas += Number(item.valor || 0);
 
@@ -626,75 +577,60 @@ Excluir
 
 });
 
-document.getElementById(
-"totalLitros"
-).innerText =
-`${totalLitros}L`;
+const totalLitrosHTML =
+document.getElementById("totalLitros");
 
-document.getElementById(
-"totalPix"
-).innerText =
-formatarMoeda(totalPix);
-
-document.getElementById(
-"totalFiado"
-).innerText =
-formatarMoeda(totalFiado);
-
-document.getElementById(
-"totalVendido"
-).innerText =
-formatarMoeda(totalVendido);
-
-const totalVendasCard =
-document.getElementById("totalVendas");
-
-if(totalVendasCard){
-
-totalVendasCard.innerText =
-vendas.length;
-
+if(totalLitrosHTML){
+totalLitrosHTML.innerText = `${totalLitros}L`;
 }
 
-document.getElementById(
-"clientesDevendo"
-).innerText =
-clientesDevendo;
+const totalPixHTML =
+document.getElementById("totalPix");
+
+if(totalPixHTML){
+totalPixHTML.innerText = formatarMoeda(totalPix);
+}
+
+const totalFiadoHTML =
+document.getElementById("totalFiado");
+
+if(totalFiadoHTML){
+totalFiadoHTML.innerText = formatarMoeda(totalFiado);
+}
+
+const totalVendidoHTML =
+document.getElementById("totalVendido");
+
+if(totalVendidoHTML){
+totalVendidoHTML.innerText = formatarMoeda(totalVendido);
+}
+
+const clientesDevendoHTML =
+document.getElementById("clientesDevendo");
+
+if(clientesDevendoHTML){
+clientesDevendoHTML.innerText = clientesDevendo;
+}
 
 const estoqueHTML =
-document.getElementById(
-"estoqueAtual"
-);
+document.getElementById("estoqueAtual");
 
 if(estoqueHTML){
-
-estoqueHTML.innerText =
-`${estoqueAtual}L`;
-
+estoqueHTML.innerText = `${estoqueAtual}L`;
 }
 
 const despesasHTML =
-document.getElementById(
-"totalDespesas"
-);
+document.getElementById("totalDespesas");
 
 if(despesasHTML){
-
-despesasHTML.innerText =
-formatarMoeda(totalDespesas);
-
+despesasHTML.innerText = formatarMoeda(totalDespesas);
 }
 
 const lucroHTML =
-document.getElementById(
-"lucroEstimado"
-);
+document.getElementById("lucroEstimado");
 
 if(lucroHTML){
-
-lucroHTML.innerText =
-formatarMoeda(lucroEstimado);
-
+lucroHTML.innerText = formatarMoeda(lucroEstimado);
 }
 
 }
@@ -702,16 +638,15 @@ formatarMoeda(lucroEstimado);
 async function carregarClientes(){
 
 const lista =
-document.getElementById(
-"listaClientes"
-);
+document.getElementById("listaClientes");
 
-if(!lista){
-return;
-}
+const listaFiado =
+document.getElementById("listaClientesFiado");
 
 const clientes =
 await obterClientes();
+
+if(lista){
 
 lista.innerHTML = "";
 
@@ -775,12 +710,79 @@ Excluir
 
 }
 
+if(listaFiado){
+
+listaFiado.innerHTML = "";
+
+const clientesFiado =
+clientes.filter(cliente => Number(cliente.devedor) > 0);
+
+if(clientesFiado.length === 0){
+
+listaFiado.innerHTML = `
+<tr>
+<td colspan="5" class="semVendas">
+Nenhum cliente devendo
+</td>
+</tr>
+`;
+
+}
+
+clientesFiado.forEach(cliente => {
+
+listaFiado.innerHTML += `
+
+<tr>
+
+<td>${cliente.nome}</td>
+
+<td>${cliente.telefone}</td>
+
+<td>${formatarMoeda(cliente.limite_valor)}</td>
+
+<td>${formatarMoeda(cliente.devedor)}</td>
+
+<td>
+
+<div style="display:flex;gap:10px;justify-content:center;">
+
+<button
+class="btnReceber"
+onclick="receberFiado('${cliente.id}')"
+>
+
+Receber
+
+</button>
+
+<button
+class="btnExcluir"
+onclick="excluirCliente('${cliente.id}')"
+>
+
+Excluir
+
+</button>
+
+</div>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+}
+
 async function carregarMovimentacoes(){
 
 const lista =
-document.getElementById(
-"listaMovimentacoes"
-);
+document.getElementById("listaMovimentacoes");
 
 if(!lista){
 return;
@@ -849,14 +851,10 @@ Excluir
 function configurarValorLitro(){
 
 const input =
-document.getElementById(
-"novoValorLitro"
-);
+document.getElementById("novoValorLitro");
 
 const btn =
-document.getElementById(
-"btnSalvarLitro"
-);
+document.getElementById("btnSalvarLitro");
 
 if(!input || !btn){
 return;
@@ -885,9 +883,7 @@ VALOR_LITRO = novo;
 
 salvarValorLitro(novo);
 
-alert(
-"Valor atualizado!"
-);
+alert("Valor atualizado!");
 
 atualizarValor();
 
@@ -896,29 +892,66 @@ atualizarValor();
 
 }
 
+function configurarAbas(){
+
+const abasBtns =
+document.querySelectorAll(".abaBtn");
+
+const conteudosAbas =
+document.querySelectorAll(".conteudoAba");
+
+if(abasBtns.length === 0){
+return;
+}
+
+abasBtns.forEach(botao => {
+
+botao.addEventListener(
+"click",
+() => {
+
+const alvo =
+botao.dataset.aba;
+
+abasBtns.forEach(btn => {
+btn.classList.remove("ativa");
+});
+
+conteudosAbas.forEach(conteudo => {
+conteudo.classList.remove("ativo");
+});
+
+botao.classList.add("ativa");
+
+const conteudoAlvo =
+document.getElementById(alvo);
+
+if(conteudoAlvo){
+conteudoAlvo.classList.add("ativo");
+}
+
+}
+);
+
+});
+
+}
+
 document.addEventListener(
 "DOMContentLoaded",
 () => {
 
 const litros =
-document.getElementById(
-"litros"
-);
+document.getElementById("litros");
 
 const btnVenda =
-document.getElementById(
-"btnRegistrar"
-);
+document.getElementById("btnRegistrar");
 
 const btnCliente =
-document.getElementById(
-"btnCadastrarCliente"
-);
+document.getElementById("btnCadastrarCliente");
 
 const btnMovimentacao =
-document.getElementById(
-"btnMovimentacao"
-);
+document.getElementById("btnMovimentacao");
 
 if(litros){
 
@@ -959,6 +992,8 @@ salvarMovimentacao
 }
 
 configurarValorLitro();
+
+configurarAbas();
 
 carregarAdmin();
 
