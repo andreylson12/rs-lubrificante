@@ -51,6 +51,18 @@ devedor NUMERIC DEFAULT 0
 );
 `);
 
+await pool.query(`
+CREATE TABLE IF NOT EXISTS movimentacoes (
+id SERIAL PRIMARY KEY,
+tipo TEXT,
+descricao TEXT,
+litros NUMERIC DEFAULT 0,
+valor NUMERIC DEFAULT 0,
+data TEXT,
+hora TEXT
+);
+`);
+
 console.log("Banco conectado!");
 
 }
@@ -169,6 +181,93 @@ litros,
 valor,
 formaFinal,
 hora
+]
+);
+
+res.json({
+sucesso:true
+});
+
+}catch(error){
+
+res.status(500).json({
+erro:error.message
+});
+
+}
+
+});
+
+app.delete("/api/vendas/:id", async (req,res) => {
+
+try{
+
+const vendaResult = await pool.query(
+`
+SELECT * FROM vendas
+WHERE id=$1
+`,
+[
+req.params.id
+]
+);
+
+if(vendaResult.rows.length === 0){
+
+return res.status(404).json({
+erro:"Venda não encontrada"
+});
+
+}
+
+const venda = vendaResult.rows[0];
+
+if(venda.forma_pagamento === "fiado"){
+
+const clienteResult = await pool.query(
+`
+SELECT * FROM clientes
+WHERE LOWER(TRIM(nome)) = LOWER(TRIM($1))
+`,
+[
+venda.nome
+]
+);
+
+if(clienteResult.rows.length > 0){
+
+const cliente = clienteResult.rows[0];
+
+let novoDevedor =
+Number(cliente.devedor || 0) - Number(venda.valor || 0);
+
+if(novoDevedor < 0){
+novoDevedor = 0;
+}
+
+await pool.query(
+`
+UPDATE clientes
+SET devedor=$1
+WHERE id=$2
+`,
+[
+novoDevedor,
+cliente.id
+]
+);
+
+}
+
+}
+
+await pool.query(
+`
+DELETE FROM vendas
+WHERE id=$1
+`,
+[
+req.params.id
 ]
 );
 
@@ -358,72 +457,87 @@ erro:error.message
 
 });
 
-app.delete("/api/vendas/:id", async (req,res) => {
+app.get("/api/movimentacoes", async (req,res) => {
 
 try{
 
-const vendaResult = await pool.query(
-`
-SELECT * FROM vendas
-WHERE id=$1
-`,
-[
-req.params.id
-]
+const result = await pool.query(
+"SELECT * FROM movimentacoes ORDER BY id DESC"
 );
 
-if(vendaResult.rows.length === 0){
+res.json(result.rows);
 
-return res.status(404).json({
-erro:"Venda não encontrada"
+}catch(error){
+
+res.status(500).json({
+erro:error.message
 });
 
 }
 
-const venda = vendaResult.rows[0];
+});
 
-if(venda.forma_pagamento === "fiado"){
+app.post("/api/movimentacoes", async (req,res) => {
 
-const clienteResult = await pool.query(
-`
-SELECT * FROM clientes
-WHERE LOWER(TRIM(nome)) = LOWER(TRIM($1))
-`,
-[
-venda.nome
-]
-);
+try{
 
-if(clienteResult.rows.length > 0){
+const {
+tipo,
+descricao,
+litros,
+valor
+} = req.body;
 
-const cliente = clienteResult.rows[0];
+const data =
+new Date().toLocaleDateString("pt-BR");
 
-let novoDevedor =
-Number(cliente.devedor || 0) - Number(venda.valor || 0);
-
-if(novoDevedor < 0){
-novoDevedor = 0;
+const hora =
+new Date().toLocaleTimeString(
+"pt-BR",
+{
+hour:"2-digit",
+minute:"2-digit"
 }
+);
 
 await pool.query(
 `
-UPDATE clientes
-SET devedor=$1
-WHERE id=$2
+INSERT INTO movimentacoes
+(tipo,descricao,litros,valor,data,hora)
+VALUES
+($1,$2,$3,$4,$5,$6)
 `,
 [
-novoDevedor,
-cliente.id
+tipo,
+descricao,
+Number(litros || 0),
+Number(valor || 0),
+data,
+hora
 ]
 );
 
-}
+res.json({
+sucesso:true
+});
+
+}catch(error){
+
+res.status(500).json({
+erro:error.message
+});
 
 }
+
+});
+
+app.delete("/api/movimentacoes/:id", async (req,res) => {
+
+try{
 
 await pool.query(
 `
-DELETE FROM vendas
+DELETE FROM movimentacoes
 WHERE id=$1
 `,
 [
