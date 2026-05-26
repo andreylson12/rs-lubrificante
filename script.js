@@ -70,21 +70,13 @@ return await response.json();
 async function cadastrarCliente(){
 
 const nome =
-document.getElementById(
-"nomeClienteCadastro"
-)?.value.trim();
+document.getElementById("nomeClienteCadastro")?.value.trim();
 
 const telefone =
-document.getElementById(
-"telefoneCliente"
-)?.value.trim();
+document.getElementById("telefoneCliente")?.value.trim();
 
 const limite =
-Number(
-document.getElementById(
-"limiteCliente"
-)?.value
-);
+Number(document.getElementById("limiteCliente")?.value);
 
 if(!nome){
 
@@ -103,12 +95,10 @@ headers:{
 },
 
 body:JSON.stringify({
-
 nome,
 telefone,
 limite,
 devedor:0
-
 })
 
 });
@@ -165,9 +155,7 @@ const nome =
 document.getElementById("nome").value.trim();
 
 const litros =
-Number(
-document.getElementById("litros").value
-);
+Number(document.getElementById("litros").value);
 
 const formaPagamento =
 document.getElementById("formaPagamento").value;
@@ -201,13 +189,11 @@ headers:{
 },
 
 body:JSON.stringify({
-
 nome,
 litros,
 valor,
 formaPagamento,
 hora
-
 })
 
 });
@@ -323,14 +309,10 @@ const descricao =
 document.getElementById("descricaoMovimentacao")?.value.trim();
 
 const litros =
-Number(
-document.getElementById("litrosMovimentacao")?.value || 0
-);
+Number(document.getElementById("litrosMovimentacao")?.value || 0);
 
 const valor =
-Number(
-document.getElementById("valorMovimentacao")?.value || 0
-);
+Number(document.getElementById("valorMovimentacao")?.value || 0);
 
 if(!tipo){
 
@@ -370,12 +352,10 @@ headers:{
 },
 
 body:JSON.stringify({
-
 tipo,
 descricao,
 litros,
 valor
-
 })
 
 });
@@ -442,6 +422,117 @@ mensagem
 
 }
 
+function atualizarGraficos(totalPix,totalFiado,totalVendido,totalDespesas,lucroEstimado,estoqueAtual,totalEntradasLitros){
+
+const barraPix =
+document.getElementById("barraPix");
+
+const barraFiado =
+document.getElementById("barraFiado");
+
+const legendaPix =
+document.getElementById("legendaPix");
+
+const legendaFiado =
+document.getElementById("legendaFiado");
+
+const totalPagamentos =
+totalPix + totalFiado;
+
+let porcentagemPix = 50;
+let porcentagemFiado = 50;
+
+if(totalPagamentos > 0){
+
+porcentagemPix =
+(totalPix / totalPagamentos) * 100;
+
+porcentagemFiado =
+(totalFiado / totalPagamentos) * 100;
+
+}
+
+if(barraPix){
+barraPix.style.width = `${porcentagemPix}%`;
+barraPix.innerText = `PIX ${porcentagemPix.toFixed(0)}%`;
+}
+
+if(barraFiado){
+barraFiado.style.width = `${porcentagemFiado}%`;
+barraFiado.innerText = `Fiado ${porcentagemFiado.toFixed(0)}%`;
+}
+
+if(legendaPix){
+legendaPix.innerText = formatarMoeda(totalPix);
+}
+
+if(legendaFiado){
+legendaFiado.innerText = formatarMoeda(totalFiado);
+}
+
+const maiorValor =
+Math.max(totalVendido,totalDespesas,lucroEstimado,1);
+
+const barraVendas =
+document.getElementById("barraVendas");
+
+const barraDespesas =
+document.getElementById("barraDespesas");
+
+const barraLucro =
+document.getElementById("barraLucro");
+
+if(barraVendas){
+barraVendas.style.height = `${Math.max((totalVendido / maiorValor) * 180,10)}px`;
+}
+
+if(barraDespesas){
+barraDespesas.style.height = `${Math.max((totalDespesas / maiorValor) * 180,10)}px`;
+}
+
+if(barraLucro){
+barraLucro.style.height = `${Math.max((lucroEstimado / maiorValor) * 180,10)}px`;
+}
+
+const barraEstoque =
+document.getElementById("barraEstoque");
+
+const textoEstoque =
+document.getElementById("textoEstoque");
+
+let porcentagemEstoque = 0;
+
+if(totalEntradasLitros > 0){
+
+porcentagemEstoque =
+(estoqueAtual / totalEntradasLitros) * 100;
+
+}
+
+if(porcentagemEstoque < 0){
+porcentagemEstoque = 0;
+}
+
+if(porcentagemEstoque > 100){
+porcentagemEstoque = 100;
+}
+
+if(barraEstoque){
+
+barraEstoque.style.width = `${porcentagemEstoque}%`;
+barraEstoque.innerText = `${porcentagemEstoque.toFixed(0)}%`;
+
+}
+
+if(textoEstoque){
+
+textoEstoque.innerText =
+`Estoque atual: ${estoqueAtual}L de ${totalEntradasLitros}L lançados.`;
+
+}
+
+}
+
 async function carregarAdmin(){
 
 const lista =
@@ -485,9 +576,7 @@ let totalDespesas = 0;
 clientes.forEach(cliente => {
 
 if(Number(cliente.devedor) > 0){
-
 clientesDevendo++;
-
 }
 
 });
@@ -632,6 +721,16 @@ document.getElementById("lucroEstimado");
 if(lucroHTML){
 lucroHTML.innerText = formatarMoeda(lucroEstimado);
 }
+
+atualizarGraficos(
+totalPix,
+totalFiado,
+totalVendido,
+totalDespesas,
+lucroEstimado,
+estoqueAtual,
+totalEntradasLitros
+);
 
 }
 
