@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auto Atendimento</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="containerCliente">
+<div class="cardCliente">
+
+<h1>⛽ Auto Atendimento</h1>
+<p>Realize o pagamento antes do abastecimento</p>
+
+<input type="text" id="nome" placeholder="Digite seu nome" autocomplete="off">
+
+<select id="formaPagamento">
+<option value="pix">PIX</option>
+<option value="fiado">Fiado / Prazo</option>
+</select>
+
+<select id="litros">
+<option value="1">1 Litro</option>
+<option value="2">2 Litros</option>
+<option value="3">3 Litros</option>
+<option value="4">4 Litros</option>
+<option value="5">5 Litros</option>
+<option value="10">10 Litros</option>
+</select>
+
+<div class="valorBox">
+<h2>Total</h2>
+<span id="valorTotal">R$ 0,00</span>
+</div>
+
+<div class="qrBox" id="qrBox">
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=SEU_PIX_FIXO" alt="QR Code PIX">
+<p>Escaneie o QR Code PIX</p>
+</div>
+
+<button id="btnRegistrar">✅ CONFIRMAR COMPRA</button>
+
+</div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
