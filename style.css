@@ -14,65 +14,80 @@ color:white;
 .containerAdmin{
 width:100%;
 min-height:100vh;
-padding:20px;
+padding:18px;
+}
+
+.tituloAdmin{
+font-size:34px;
+margin-bottom:20px;
+color:#38bdf8;
 }
 
 .cardCliente{
-max-width:500px;
-margin:auto;
+max-width:520px;
+margin:30px auto;
 background:#111827;
-padding:25px;
-border-radius:20px;
+padding:28px;
+border-radius:24px;
 border:1px solid #1e293b;
+box-shadow:0 10px 30px rgba(0,0,0,0.25);
 }
 
 .cardCliente h1{
-font-size:32px;
+font-size:34px;
 margin-bottom:10px;
 color:#38bdf8;
 }
 
 .cardCliente p{
 color:#94a3b8;
-margin-bottom:20px;
+margin-bottom:22px;
+font-size:16px;
 }
 
 input,
 select{
 width:100%;
-padding:15px;
-margin-bottom:15px;
+height:48px;
+padding:0 14px;
+margin-bottom:12px;
 border:none;
-border-radius:15px;
+border-radius:12px;
 background:#1e293b;
 color:white;
-font-size:16px;
+font-size:15px;
 outline:none;
 }
 
 button{
-width:100%;
-padding:18px;
+height:48px;
 border:none;
-border-radius:15px;
+border-radius:12px;
 background:#22c55e;
 color:white;
-font-size:18px;
+font-size:15px;
 font-weight:bold;
 cursor:pointer;
-transition:0.3s;
+transition:0.2s;
+padding:0 18px;
 }
 
 button:hover{
 opacity:0.85;
 }
 
+.cardCliente button{
+width:100%;
+height:58px;
+font-size:20px;
+}
+
 .valorBox{
 background:#1e293b;
-padding:20px;
+padding:22px;
 border-radius:20px;
 text-align:center;
-margin-bottom:15px;
+margin-bottom:16px;
 }
 
 .valorBox h2{
@@ -81,14 +96,14 @@ margin-bottom:10px;
 }
 
 .valorBox span{
-font-size:45px;
+font-size:46px;
 font-weight:bold;
 color:#22c55e;
 }
 
 .qrBox{
 background:white;
-padding:20px;
+padding:22px;
 border-radius:20px;
 text-align:center;
 margin-bottom:20px;
@@ -113,43 +128,40 @@ background:#111827;
 padding:20px;
 border-radius:20px;
 border:1px solid #1e293b;
-margin-bottom:20px;
+margin-bottom:18px;
+box-shadow:0 8px 24px rgba(0,0,0,0.18);
 }
 
 .configBox h2,
 .clientesBox h2,
+.tabelaBox h2,
 .clientesTabela h2{
-margin-bottom:15px;
+margin-bottom:16px;
 color:#38bdf8;
+font-size:22px;
 }
 
 .configFlex{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:12px;
+align-items:center;
 }
 
-.configFlex input{
-flex:1;
+.configFlex input,
+.configFlex select{
 margin-bottom:0;
 }
 
 .configFlex button{
-width:auto;
-padding:15px 25px;
-}
-
-.tituloAdmin{
-font-size:35px;
-margin-bottom:20px;
-color:#38bdf8;
+width:100%;
 }
 
 .cardsInfo{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-gap:15px;
-margin-bottom:20px;
+grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+gap:14px;
+margin-bottom:18px;
 }
 
 .infoCard{
@@ -157,61 +169,71 @@ background:#111827;
 padding:20px;
 border-radius:20px;
 border:1px solid #1e293b;
+min-height:115px;
+display:flex;
+flex-direction:column;
+justify-content:center;
 }
 
 .infoCard h3{
 color:#94a3b8;
-margin-bottom:10px;
+margin-bottom:12px;
+font-size:16px;
 }
 
 .infoCard span{
 font-size:26px;
 font-weight:bold;
 color:#22c55e;
+word-break:break-word;
 }
 
 .tabelaBox,
 .clientesTabela{
-overflow:auto;
+overflow-x:auto;
 }
 
 table{
 width:100%;
 border-collapse:collapse;
-min-width:750px;
+min-width:850px;
 }
 
 th{
 background:#1e293b;
-padding:15px;
+padding:14px;
+font-size:14px;
 }
 
 td{
-padding:15px;
+padding:14px;
 text-align:center;
 border-bottom:1px solid #1e293b;
+font-size:14px;
 }
 
 .btnExcluir{
 background:#ef4444;
-padding:10px 15px;
+height:40px;
+padding:0 14px;
 border:none;
 border-radius:10px;
 color:white;
 cursor:pointer;
 width:auto;
-font-size:14px;
+font-size:13px;
 }
 
 .btnReceber{
 background:#22c55e;
-padding:10px 15px;
+height:40px;
+padding:0 14px;
 border:none;
 border-radius:10px;
 color:white;
 cursor:pointer;
 width:auto;
-font-size:14px;
+font-size:13px;
 }
 
 .semVendas{
@@ -220,45 +242,67 @@ padding:30px;
 color:#94a3b8;
 }
 
-@media(max-width:700px){
+@media(max-width:768px){
 
 .containerCliente,
 .containerAdmin{
 padding:12px;
 }
 
-.cardCliente{
-padding:20px;
-}
-
-.cardCliente h1,
 .tituloAdmin{
 font-size:28px;
 }
 
-.configFlex{
-flex-direction:column;
+.cardCliente{
+margin:10px auto;
+padding:22px;
 }
 
-.configFlex button{
-width:100%;
-}
-
-table{
-min-width:750px;
-font-size:12px;
-}
-
-td,th{
-padding:10px;
+.cardCliente h1{
+font-size:28px;
 }
 
 .valorBox span{
-font-size:35px;
+font-size:36px;
+}
+
+.cardsInfo{
+grid-template-columns:1fr 1fr;
+}
+
+.infoCard{
+min-height:95px;
+padding:16px;
+}
+
+.infoCard h3{
+font-size:13px;
 }
 
 .infoCard span{
-font-size:22px;
+font-size:20px;
+}
+
+.configFlex{
+grid-template-columns:1fr;
+}
+
+table{
+min-width:850px;
+}
+
+th,
+td{
+font-size:12px;
+padding:10px;
+}
+
+}
+
+@media(max-width:480px){
+
+.cardsInfo{
+grid-template-columns:1fr;
 }
 
 }
