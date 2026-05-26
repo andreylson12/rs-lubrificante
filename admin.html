@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 
 <head>
+
 <script>
 
 if(
@@ -15,8 +16,6 @@ window.location.href =
 }
 
 </script>
-
-<meta charset="UTF-8">
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,6 +33,88 @@ window.location.href =
 <h1 class="tituloAdmin">
 🔐 Painel Admin
 </h1>
+
+<div class="abasAdmin">
+
+<button class="abaBtn ativa" data-aba="abaResumo">
+📊 Resumo
+</button>
+
+<button class="abaBtn" data-aba="abaConfig">
+⚙️ Configuração
+</button>
+
+<button class="abaBtn" data-aba="abaClientes">
+👥 Clientes
+</button>
+
+<button class="abaBtn" data-aba="abaEntradas">
+📦 Entradas e Gastos
+</button>
+
+<button class="abaBtn" data-aba="abaVendas">
+💰 Vendas
+</button>
+
+<button class="abaBtn" data-aba="abaFiados">
+📒 Fiados
+</button>
+
+<button class="abaBtn" data-aba="abaMovimentacoes">
+📋 Movimentações
+</button>
+
+</div>
+
+<div id="abaResumo" class="conteudoAba ativo">
+
+<div class="cardsInfo">
+
+<div class="infoCard">
+<h3>Total Litros Vendidos</h3>
+<span id="totalLitros">0L</span>
+</div>
+
+<div class="infoCard">
+<h3>Total PIX</h3>
+<span id="totalPix">R$ 0,00</span>
+</div>
+
+<div class="infoCard">
+<h3>Total Fiado</h3>
+<span id="totalFiado">R$ 0,00</span>
+</div>
+
+<div class="infoCard">
+<h3>Total Geral</h3>
+<span id="totalVendido">R$ 0,00</span>
+</div>
+
+<div class="infoCard">
+<h3>Clientes Devendo</h3>
+<span id="clientesDevendo">0</span>
+</div>
+
+<div class="infoCard">
+<h3>Estoque Atual</h3>
+<span id="estoqueAtual">0L</span>
+</div>
+
+<div class="infoCard">
+<h3>Total Despesas</h3>
+<span id="totalDespesas">R$ 0,00</span>
+</div>
+
+<div class="infoCard">
+<h3>Lucro Estimado</h3>
+<span id="lucroEstimado">R$ 0,00</span>
+</div>
+
+</div>
+
+</div>
+
+<div id="abaConfig" class="conteudoAba">
 
 <div class="configBox">
 
@@ -57,6 +138,10 @@ Salvar Valor
 </div>
 
 </div>
+
+</div>
+
+<div id="abaClientes" class="conteudoAba">
 
 <div class="clientesBox">
 
@@ -91,6 +176,38 @@ Cadastrar Cliente
 </div>
 
 </div>
+
+<div class="clientesTabela">
+
+<h2>
+👥 Clientes Cadastrados
+</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Cliente</th>
+<th>Telefone</th>
+<th>Limite</th>
+<th>Devedor</th>
+<th>Ação</th>
+
+</tr>
+
+</thead>
+
+<tbody id="listaClientes"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<div id="abaEntradas" class="conteudoAba">
 
 <div class="clientesBox">
 
@@ -138,49 +255,9 @@ Salvar
 
 </div>
 
-<div class="cardsInfo">
-
-<div class="infoCard">
-<h3>Total Litros Vendidos</h3>
-<span id="totalLitros">0L</span>
 </div>
 
-<div class="infoCard">
-<h3>Total PIX</h3>
-<span id="totalPix">R$ 0,00</span>
-</div>
-
-<div class="infoCard">
-<h3>Total Fiado</h3>
-<span id="totalFiado">R$ 0,00</span>
-</div>
-
-<div class="infoCard">
-<h3>Total Geral</h3>
-<span id="totalVendido">R$ 0,00</span>
-</div>
-
-<div class="infoCard">
-<h3>Clientes Devendo</h3>
-<span id="clientesDevendo">0</span>
-</div>
-
-<div class="infoCard">
-<h3>Estoque Atual</h3>
-<span id="estoqueAtual">0L</span>
-</div>
-
-<div class="infoCard">
-<h3>Total Despesas</h3>
-<span id="totalDespesas">R$ 0,00</span>
-</div>
-
-<div class="infoCard">
-<h3>Lucro Estimado</h3>
-<span id="lucroEstimado">R$ 0,00</span>
-</div>
-
-</div>
+<div id="abaVendas" class="conteudoAba">
 
 <div class="tabelaBox">
 
@@ -211,6 +288,10 @@ Salvar
 
 </div>
 
+</div>
+
+<div id="abaFiados" class="conteudoAba">
+
 <div class="clientesTabela">
 
 <h2>
@@ -233,16 +314,20 @@ Salvar
 
 </thead>
 
-<tbody id="listaClientes"></tbody>
+<tbody id="listaClientesFiado"></tbody>
 
 </table>
 
 </div>
 
+</div>
+
+<div id="abaMovimentacoes" class="conteudoAba">
+
 <div class="clientesTabela">
 
 <h2>
-📦 Movimentações
+📋 Movimentações
 </h2>
 
 <table>
@@ -265,6 +350,8 @@ Salvar
 <tbody id="listaMovimentacoes"></tbody>
 
 </table>
+
+</div>
 
 </div>
 
