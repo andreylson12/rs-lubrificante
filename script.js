@@ -1,4 +1,4 @@
-const API = window.location.origin;
+const API = "https://rs-lubrificante-production.up.railway.app";
 
 const TOKEN =
 localStorage.getItem("admin_token");
@@ -149,6 +149,42 @@ const hora = new Date().toLocaleTimeString("pt-BR",{
 hour:"2-digit",
 minute:"2-digit"
 });
+
+if(formaPagamento === "pix"){
+
+const responsePix = await fetch(`${API}/api/criar-pix`,{
+method:"POST",
+headers:headersPublic(),
+body:JSON.stringify({
+nome,
+litros,
+valor
+})
+});
+
+const pix = await responsePix.json();
+
+if(!responsePix.ok){
+alert("Erro ao gerar PIX");
+console.log(pix);
+return;
+}
+
+const qrBox = document.getElementById("qrBox");
+
+if(qrBox){
+qrBox.innerHTML = `
+<img src="data:image/png;base64,${pix.qr_code_base64}" alt="QR Code PIX">
+<p>Escaneie o QR Code PIX</p>
+<textarea readonly style="width:100%;height:80px;">${pix.qr_code}</textarea>
+`;
+qrBox.style.display = "block";
+}
+
+alert("PIX gerado! Depois vamos colocar confirmação automática.");
+
+return;
+}
 
 const response = await fetch(`${API}/api/vendas`,{
 method:"POST",
