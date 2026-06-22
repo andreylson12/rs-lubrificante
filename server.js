@@ -136,10 +136,19 @@ nome = String(nome || "").trim();
 const pagamentoRecebido = formaPagamento || forma_pagamento || "pix";
 const pagamento = normalizarTexto(pagamentoRecebido);
 
-const formaFinal =
-pagamento.includes("fiado") || pagamento.includes("prazo")
-? "fiado"
-: "pix";
+let formaFinal = "pix";
+
+if(pagamento.includes("fiado") || pagamento.includes("prazo")){
+formaFinal = "fiado";
+}
+
+if(pagamento.includes("dinheiro")){
+formaFinal = "dinheiro";
+}
+
+if(pagamento.includes("cartao") || pagamento.includes("cartão")){
+formaFinal = "cartao";
+}
 
 const data = new Date().toLocaleDateString("pt-BR");
 
@@ -426,6 +435,60 @@ res.json({ sucesso:true });
 res.status(500).json({ erro:error.message });
 }
 
+});
+
+app.post("/api/criar-pix", async (req,res) => {
+try{
+
+const { nome, litros, valor } = req.body;
+
+if(!process.env.MERCADO_PAGO_ACCESS_TOKEN){
+return res.status(500).json({ erro:"Token Mercado Pago não configurado" });
+}
+
+if(!nome || String(nome).trim().length < 2){
+return res.status(400).json({ erro:"Nome inválido" });
+}
+
+if(!valor || Number(valor) <= 0){
+return res.status(400).json({ erro:"Valor inválido" });
+}
+
+const pagamento = await fetch("https://api.mercadopago.com/v1/payments", {
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":`Bearer ${process.env.MERCADO_PAGO_ACCESS_TOKEN}`,
+"X-Idempotency-Key":`${Date.now()}-${Math.random()}`
+},
+body:JSON.stringify({
+transaction_amount:Number(valor),
+description:`Compra de ${litros} litros - RS Lubrificante`,
+payment_method_id:"pix",
+payer:{
+email:"cliente@rslubrificante.com",
+first_name:nome || "Cliente"
+}
+})
+});
+
+const dados = await pagamento.json();
+
+if(!pagamento.ok){
+return res.status(400).json({ erro:dados });
+}
+
+res.json({
+id:dados.id,
+status:dados.status,
+qr_code:dados.point_of_interaction.transaction_data.qr_code,
+qr_code_base64:dados.point_of_interaction.transaction_data.qr_code_base64,
+ticket_url:dados.point_of_interaction.transaction_data.ticket_url
+});
+
+}catch(error){
+res.status(500).json({ erro:error.message });
+}
 });
 
 const PORT = process.env.PORT || 3000;
