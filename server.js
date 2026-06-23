@@ -635,6 +635,33 @@ app.post("/api/point/pagar", async (req, res) => {
     });
   }
 });
+app.post("/api/point/cancelar/:orderId", async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    const resposta = await fetch(
+      `https://api.mercadopago.com/v1/orders/${orderId}/cancel`,
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${process.env.MERCADO_PAGO_ACCESS_TOKEN}`,
+          "X-Idempotency-Key": `${Date.now()}-${Math.random()}`
+        }
+      }
+    );
+
+    const dados = await resposta.json();
+
+    if (!resposta.ok) {
+      return res.status(resposta.status).json(dados);
+    }
+
+    res.json(dados);
+
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
+  }
+});
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
