@@ -672,23 +672,26 @@ app.get("/api/point/orders", async (req, res) => {
     const begin = ontem.toISOString();
     const end = hoje.toISOString();
 
-    const resposta = await fetch(
-      `https://api.mercadopago.com/v1/orders/search?begin_date=${encodeURIComponent(begin)}&end_date=${encodeURIComponent(end)}`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.MERCADO_PAGO_ACCESS_TOKEN}`
-        }
+    const url =
+      `https://api.mercadopago.com/v1/orders?begin_date=${encodeURIComponent(begin)}&end_date=${encodeURIComponent(end)}&limit=10`;
+
+    const resposta = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${process.env.MERCADO_PAGO_ACCESS_TOKEN}`
       }
-    );
+    });
 
     const dados = await resposta.json();
 
-    res.status(resposta.status).json(dados);
+    if (!resposta.ok) {
+      return res.status(resposta.status).json(dados);
+    }
+
+    res.json(dados);
 
   } catch (error) {
-    res.status(500).json({
-      erro: error.message
-    });
+    res.status(500).json({ erro: error.message });
   }
 });
 const PORT = process.env.PORT || 3000;
