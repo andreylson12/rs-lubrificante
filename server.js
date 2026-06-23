@@ -491,6 +491,42 @@ res.status(500).json({ erro:error.message });
 }
 });
 
+app.get("/api/point/terminais", async (req, res) => {
+  try {
+
+    if (!process.env.MERCADO_PAGO_ACCESS_TOKEN) {
+      return res.status(500).json({
+        erro: "Token Mercado Pago não configurado"
+      });
+    }
+
+    const resposta = await fetch(
+      "https://api.mercadopago.com/point/integration-api/devices",
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${process.env.MERCADO_PAGO_ACCESS_TOKEN}`
+        }
+      }
+    );
+
+    const dados = await resposta.json();
+
+    if (!resposta.ok) {
+      return res.status(resposta.status).json(dados);
+    }
+
+    res.json(dados);
+
+  } catch (error) {
+
+    res.status(500).json({
+      erro: error.message
+    });
+
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
