@@ -567,6 +567,74 @@ app.patch("/api/point/modo-pdv", async (req, res) => {
     });
   }
 });
+
+app.post("/api/point/pagar", async (req, res) => {
+  try {
+
+    const { nome, litros, valor } = req.body;
+
+    const terminalId = "NEWLAND_N950__N950NCD200096404";
+
+    if (!process.env.MERCADO_PAGO_ACCESS_TOKEN) {
+      return res.status(500).json({
+        erro: "Token Mercado Pago não configurado"
+      });
+    }
+
+    if (!valor || Number(valor) <= 0) {
+      return res.status(400).json({
+        erro: "Valor inválido"
+      });
+    }
+
+    const externalReference = `RS-${Date.now()}`;
+
+    const resposta = await fetch("https://api.mercadopago.com/v1/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.MERCADO_PAGO_ACCESS_TOKEN}`,
+        "X-Idempotency-Key": `${Date.now()}-${Math.random()}`
+      },
+      body: JSON.stringify({
+        type: "point",
+        external_reference: externalReference,
+        expiration_time: "PT16M",
+        transactions: {
+          payments: [
+            {
+              amount: Number(valor).toFixed(2)
+            }
+          ]
+        },
+        config: {
+          point: {
+            terminal_id: terminalId,
+            print_on_terminal: "no_ticket"
+          },
+          payment_method: {
+            default_type: "credit_card",
+            installments_cost: "seller"
+          }
+        },
+        description: `${litros} litros - ${nome || "Cliente"}`
+      })
+    });
+
+    const dados = await resposta.json();
+
+    if (!resposta.ok) {
+      return res.status(resposta.status).json(dados);
+    }
+
+    res.json(dados);
+
+  } catch (error) {
+    res.status(500).json({
+      erro: error.message
+    });
+  }
+});
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
