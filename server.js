@@ -543,8 +543,12 @@ app.patch("/api/point/modo-pdv", async (req, res) => {
           "X-Idempotency-Key": `${Date.now()}-${Math.random()}`
         },
         body: JSON.stringify({
-          terminal_id: terminalId,
-          operating_mode: "PDV"
+          terminals: [
+            {
+              id: terminalId,
+              operating_mode: "PDV"
+            }
+          ]
         })
       }
     );
