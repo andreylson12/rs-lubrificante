@@ -572,19 +572,14 @@ app.post("/api/point/pagar", async (req, res) => {
   try {
 
     const { nome, litros, valor } = req.body;
-
     const terminalId = "NEWLAND_N950__N950NCD200096404";
 
     if (!process.env.MERCADO_PAGO_ACCESS_TOKEN) {
-      return res.status(500).json({
-        erro: "Token Mercado Pago não configurado"
-      });
+      return res.status(500).json({ erro: "Token Mercado Pago não configurado" });
     }
 
     if (!valor || Number(valor) <= 0) {
-      return res.status(400).json({
-        erro: "Valor inválido"
-      });
+      return res.status(400).json({ erro: "Valor inválido" });
     }
 
     const externalReference = `RS-${Date.now()}`;
@@ -599,7 +594,7 @@ app.post("/api/point/pagar", async (req, res) => {
       body: JSON.stringify({
         type: "point",
         external_reference: externalReference,
-        expiration_time: "PT1M",
+        expiration_time: "PT10M",
         description: `${litros} litros - ${nome || "Cliente"}`,
         transactions: {
           payments: [
@@ -611,9 +606,8 @@ app.post("/api/point/pagar", async (req, res) => {
         config: {
           point: {
             terminal_id: terminalId,
-            print_on_terminal: "no_ticket"
-          },
-         
+            print_on_terminal: "seller_ticket"
+          }
         }
       })
     });
@@ -627,9 +621,7 @@ app.post("/api/point/pagar", async (req, res) => {
     res.json(dados);
 
   } catch (error) {
-    res.status(500).json({
-      erro: error.message
-    });
+    res.status(500).json({ erro: error.message });
   }
 });
 app.post("/api/point/cancelar/:orderId", async (req, res) => {
