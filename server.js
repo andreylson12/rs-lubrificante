@@ -599,7 +599,7 @@ app.post("/api/point/pagar", async (req, res) => {
       body: JSON.stringify({
         type: "point",
         external_reference: externalReference,
-        expiration_time: "PT3M",
+        expiration_time: "PT1M",
         description: `${litros} litros - ${nome || "Cliente"}`,
         transactions: {
           payments: [
@@ -613,10 +613,7 @@ app.post("/api/point/pagar", async (req, res) => {
             terminal_id: terminalId,
             print_on_terminal: "no_ticket"
           },
-          payment_method: {
-            default_type: "credit_card",
-            installments_cost: "seller"
-          }
+         
         }
       })
     });
