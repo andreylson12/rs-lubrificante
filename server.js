@@ -690,6 +690,23 @@ app.get("/api/point/orders", async (req, res) => {
     res.status(500).json({ erro: error.message });
   }
 });
+
+app.get("/api/point/terminais-v2", async (req, res) => {
+  try {
+    const resposta = await fetch("https://api.mercadopago.com/terminals/v1/list", {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${process.env.MERCADO_PAGO_ACCESS_TOKEN}`
+      }
+    });
+
+    const dados = await resposta.json();
+    res.status(resposta.status).json(dados);
+
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
+  }
+});
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
