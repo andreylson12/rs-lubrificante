@@ -3,6 +3,8 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const { Pool } = require("pg");
 
+console.log("===== SERVER RS LUBRIFICANTE INICIADO =====");
+
 const app = express();
 
 app.use(cors());
