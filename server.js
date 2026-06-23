@@ -664,26 +664,31 @@ app.post("/api/point/cancelar/:orderId", async (req, res) => {
 });
 app.get("/api/point/orders", async (req, res) => {
   try {
+
+    const hoje = new Date();
+    const ontem = new Date();
+    ontem.setDate(hoje.getDate() - 1);
+
+    const begin = ontem.toISOString();
+    const end = hoje.toISOString();
+
     const resposta = await fetch(
-      "https://api.mercadopago.com/v1/orders?limit=10",
+      `https://api.mercadopago.com/v1/orders/search?begin_date=${encodeURIComponent(begin)}&end_date=${encodeURIComponent(end)}`,
       {
-        method: "GET",
         headers: {
-          "Authorization": `Bearer ${process.env.MERCADO_PAGO_ACCESS_TOKEN}`
+          Authorization: `Bearer ${process.env.MERCADO_PAGO_ACCESS_TOKEN}`
         }
       }
     );
 
     const dados = await resposta.json();
 
-    if (!resposta.ok) {
-      return res.status(resposta.status).json(dados);
-    }
-
-    res.json(dados);
+    res.status(resposta.status).json(dados);
 
   } catch (error) {
-    res.status(500).json({ erro: error.message });
+    res.status(500).json({
+      erro: error.message
+    });
   }
 });
 const PORT = process.env.PORT || 3000;
