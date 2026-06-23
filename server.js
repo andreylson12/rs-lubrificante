@@ -528,7 +528,41 @@ app.get("/api/point/terminais", async (req, res) => {
 
   }
 });
+app.patch("/api/point/modo-pdv", async (req, res) => {
+  try {
 
+    const terminalId = "NEWLAND_N950__N950NCD200096404";
+
+    const resposta = await fetch(
+      "https://api.mercadopago.com/terminals/v1/setup",
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.MERCADO_PAGO_ACCESS_TOKEN}`,
+          "X-Idempotency-Key": `${Date.now()}-${Math.random()}`
+        },
+        body: JSON.stringify({
+          terminal_id: terminalId,
+          operating_mode: "PDV"
+        })
+      }
+    );
+
+    const dados = await resposta.json();
+
+    if (!resposta.ok) {
+      return res.status(resposta.status).json(dados);
+    }
+
+    res.json(dados);
+
+  } catch (error) {
+    res.status(500).json({
+      erro: error.message
+    });
+  }
+});
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
