@@ -640,9 +640,9 @@ app.post("/api/point/cancelar/:orderId", async (req, res) => {
     const { orderId } = req.params;
 
     const resposta = await fetch(
-      `https://api.mercadopago.com/v1/orders/${orderId}/cancel`,
+      `https://api.mercadopago.com/v1/orders/${orderId}`,
       {
-        method: "POST",
+        method: "DELETE",
         headers: {
           "Authorization": `Bearer ${process.env.MERCADO_PAGO_ACCESS_TOKEN}`,
           "X-Idempotency-Key": `${Date.now()}-${Math.random()}`
@@ -650,7 +650,14 @@ app.post("/api/point/cancelar/:orderId", async (req, res) => {
       }
     );
 
-    const dados = await resposta.json();
+    const texto = await resposta.text();
+
+    let dados;
+    try {
+      dados = JSON.parse(texto);
+    } catch {
+      dados = { resposta: texto };
+    }
 
     if (!resposta.ok) {
       return res.status(resposta.status).json(dados);
