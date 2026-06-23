@@ -594,12 +594,13 @@ app.post("/api/point/pagar", async (req, res) => {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${process.env.MERCADO_PAGO_ACCESS_TOKEN}`,
-        "X-Idempotency-Key": `${Date.now()}-${Math.random()}`
+        "X-Idempotency-Key": externalReference
       },
       body: JSON.stringify({
         type: "point",
         external_reference: externalReference,
-        expiration_time: "PT16M",
+        expiration_time: "PT3M",
+        description: `${litros} litros - ${nome || "Cliente"}`,
         transactions: {
           payments: [
             {
@@ -616,8 +617,7 @@ app.post("/api/point/pagar", async (req, res) => {
             default_type: "credit_card",
             installments_cost: "seller"
           }
-        },
-        description: `${litros} litros - ${nome || "Cliente"}`
+        }
       })
     });
 
